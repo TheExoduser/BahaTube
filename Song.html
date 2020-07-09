@@ -1,212 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> Song</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+      
+        <meta name="author" content="Skick">
+      
+        <meta name="description" content="A Discord.js v12 module to easily manage music commands and play Youtube song on Discord without any API key.">
+      
+    
+    <title>Song</title>
 
-  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="./build/entry.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
-  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
-  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
-  <link type="text/css" rel="stylesheet" href="">
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/search.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.5/fuse.min.js"></script> -->
+    <script src="scripts/fuse.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/clean-jsdoc-theme.css">
+    
+    
+    
+<svg aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+    <defs>
+        <symbol id="copy-icon" viewbox="0 0 488.3 488.3">
+            <g>
+                <path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/>
+                <path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/>
+            </g>
+        </symbol>
+    </defs>
+</svg>
 
-  
 </head>
+<body>
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
 
+<label for="nav-trigger" class="overlay"></label>
 
+<nav>
+    <h2><a href="index.html"><div class="text">DisTube</div></a></h2><div class="search-box"><input type="text" placeholder="Search..." id="search-box" /><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-list-div"><ul><li><a href='https://www.npmjs.com/package/distube' class='' id='' target='_blank'>NPM</a></li><li><a href='https://github.com/skick1234/DisTube/' class='' id='' target='_blank'>Github</a></li></ul><h3>Classes</h3><ul><li><a href="DisTube.html">DisTube</a><ul class='methods'><li data-type='method'><a href="DisTube.html#getQueue">getQueue</a></li><li data-type='method'><a href="DisTube.html#isPaused">isPaused</a></li><li data-type='method'><a href="DisTube.html#isPlaying">isPlaying</a></li><li data-type='method'><a href="DisTube.html#jump">jump</a></li><li data-type='method'><a href="DisTube.html#pause">pause</a></li><li data-type='method'><a href="DisTube.html#play">play</a></li><li data-type='method'><a href="DisTube.html#resume">resume</a></li><li data-type='method'><a href="DisTube.html#setRepeatMode">setRepeatMode</a></li><li data-type='method'><a href="DisTube.html#setVolume">setVolume</a></li><li data-type='method'><a href="DisTube.html#shuffle">shuffle</a></li><li data-type='method'><a href="DisTube.html#skip">skip</a></li><li data-type='method'><a href="DisTube.html#stop">stop</a></li><li data-type='method'><a href="DisTube.html#toggleAutoplay">toggleAutoplay</a></li></ul></li><li><a href="Queue.html">Queue</a></li><li><a href="Song.html">Song</a></li></ul><h3>Events</h3><ul><li><a href="DisTube.html#event:addList">addList</a></li><li><a href="DisTube.html#event:addSong">addSong</a></li><li><a href="DisTube.html#event:empty">empty</a></li><li><a href="DisTube.html#event:error">error</a></li><li><a href="DisTube.html#event:finish">finish</a></li><li><a href="DisTube.html#event:noRelated">noRelated</a></li><li><a href="DisTube.html#event:playList">playList</a></li><li><a href="DisTube.html#event:playSong">playSong</a></li><li><a href="DisTube.html#event:searchCancel">searchCancel</a></li><li><a href="DisTube.html#event:searchResult">searchResult</a></li><li><a href="DisTube.html#event:stop">stop</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+</nav>
 
-<body class="layout small-header">
-    <div id="stickyNavbarOverlay"></div>
+<div id="main">
+    
+    <h1 class="page-title">Song</h1>
     
 
-<div class="top-nav">
-    <div class="inner">
-        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-        <div class="logo">
-            
-             
-                <a href="index.html">
-                    <h1 class="navbar-item">DisTube</h1>
-                </a>
-            
-        </div>
-        <div class="menu">
-            
-            <div class="navigation">
-                <a
-                    href="index.html"
-                    class="link"
-                >
-                    API Documentation
-                </a>
-                
-                
-                
-            </div>
-        </div>
-    </div>
-</div>
-    <div id="main">
-        <div
-            class="sidebar "
-            id="sidebarNav"
-        >
-            
-            <nav>
-                
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="DisTube.html">DisTube</a></li><li><a href="Queue.html">Queue</a></li><li><a href="Song.html">Song</a></li></ul><h3>Events</h3><ul><li><a href="DisTube.html#event:addList">addList</a></li><li><a href="DisTube.html#event:addSong">addSong</a></li><li><a href="DisTube.html#event:empty">empty</a></li><li><a href="DisTube.html#event:error">error</a></li><li><a href="DisTube.html#event:finish">finish</a></li><li><a href="DisTube.html#event:noRelated">noRelated</a></li><li><a href="DisTube.html#event:playList">playList</a></li><li><a href="DisTube.html#event:playSong">playSong</a></li><li><a href="DisTube.html#event:searchCancel">searchCancel</a></li><li><a href="DisTube.html#event:searchResult">searchResult</a></li><li><a href="DisTube.html#event:stop">stop</a></li></ul><h3><a href="global.html">Global</a></h3></div>
-                
-            </nav>
-        </div>
-        <div class="core" id="main-content-wrapper">
-            <div class="content">
-                <header class="page-title">
-                    <p>Class</p>
-                    <h1>Song</h1>
-                </header>
-                
+    
 
 
 
 
 <section>
 
+
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Song<span class="signature">(video, userID)</span><span class="type-signature"></span></h2>
+        
+        <h2>
+        
+        Song
+        
+        </h2>
+        
         
             <div class="class-description"><p>Represents a song.</p></div>
+            <hr/>
         
     
 </header>
+
 
 <article>
     <div class="container-overview">
     
         
-            <div class='vertical-section'>
-                <div class="members">
-                    <div class="member">
-                        <div class=name>
-                            <span class="tag">Constructor</span>
-                        </div>
-                        
-
 
     
-    <h4 class="name" id="Song">
-        <a class="href-link" href="#Song">#</a>
+        <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="Song"><span class="type-signature"></span>new Song<span class="signature">(video, userID)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
-        <span class="code-name">
-            
-                new Song<span class="signature">(video, userID)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
-    
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
         <tr>
             
-            <th>Name</th>
+                <td class="name"><code>video</code></td>
             
 
-            <th>Type</th>
-
+            <td class="type">
             
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>video</code></td>
-  
-
-  <td class="type">
-  
-      
+                
 <span class="param-type">ytdl.videoInfo</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Youtube video info</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>userID</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>Youtube video info</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>userID</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Snowflake</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The ID of the user requested video</p></td>
-</tr>
+            <td class="description last"><p>The ID of the user requested video</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -237,6 +207,7 @@
     
 
     
+
     
 
     
@@ -261,20 +232,8 @@
 
 
 
-
-
-
-
-
-
-                    </div>
-                </div>
-            </div>
-        
     
     </div>
-    
-    
 
     
 
@@ -282,33 +241,16 @@
 
     
 
-    
+     
 
     
 
     
-        <div class='vertical-section'>
-            <h1>Members</h1>
-            <div class="members">
-            
-                <div class="member">
+        <h3 class="subsection-title">Members</h3>
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">number</span>
-
-
-    </span>
-
-<h4 class="name" id="duration">
-    <a class="href-link" href="#duration">#</a>
-    
-    <span class="code-name">
-        duration
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="duration"><span class="type-signature"></span>duration<span class="type-signature"> :number</span></h4>
 
 
 
@@ -319,6 +261,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -346,6 +302,7 @@
     
 
     
+
     
 
     
@@ -359,26 +316,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">string</span>
-
-
-    </span>
-
-<h4 class="name" id="formattedDuration">
-    <a class="href-link" href="#formattedDuration">#</a>
-    
-    <span class="code-name">
-        formattedDuration
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="formattedDuration"><span class="type-signature"></span>formattedDuration<span class="type-signature"> :string</span></h4>
 
 
 
@@ -389,6 +330,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -416,6 +371,7 @@
     
 
     
+
     
 
     
@@ -429,26 +385,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">string</span>
-
-
-    </span>
-
-<h4 class="name" id="name">
-    <a class="href-link" href="#name">#</a>
-    
-    <span class="code-name">
-        name
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
 
 
 
@@ -459,6 +399,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -486,6 +440,7 @@
     
 
     
+
     
 
     
@@ -499,26 +454,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">Array.&lt;ytdl.relatedVideo></span>
-
-
-    </span>
-
-<h4 class="name" id="related">
-    <a class="href-link" href="#related">#</a>
-    
-    <span class="code-name">
-        related
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="related"><span class="type-signature"></span>related<span class="type-signature"> :Array.&lt;ytdl.relatedVideo></span></h4>
 
 
 
@@ -529,6 +468,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;ytdl.relatedVideo></span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -556,6 +509,7 @@
     
 
     
+
     
 
     
@@ -569,26 +523,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">string</span>
-
-
-    </span>
-
-<h4 class="name" id="thumbnail">
-    <a class="href-link" href="#thumbnail">#</a>
-    
-    <span class="code-name">
-        thumbnail
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="thumbnail"><span class="type-signature"></span>thumbnail<span class="type-signature"> :string</span></h4>
 
 
 
@@ -599,6 +537,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -626,6 +578,7 @@
     
 
     
+
     
 
     
@@ -639,26 +592,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">string</span>
-
-
-    </span>
-
-<h4 class="name" id="url">
-    <a class="href-link" href="#url">#</a>
-    
-    <span class="code-name">
-        url
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="url"><span class="type-signature"></span>url<span class="type-signature"> :string</span></h4>
 
 
 
@@ -669,6 +606,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -696,6 +647,7 @@
     
 
     
+
     
 
     
@@ -709,26 +661,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">Discord.User</span>
-
-
-    </span>
-
-<h4 class="name" id="user">
-    <a class="href-link" href="#user">#</a>
-    
-    <span class="code-name">
-        user
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="user"><span class="type-signature"></span>user<span class="type-signature"> :Discord.User</span></h4>
 
 
 
@@ -739,6 +675,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">Discord.User</span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -766,6 +716,7 @@
     
 
     
+
     
 
     
@@ -779,10 +730,8 @@
 
 
 
-</div>
-            
-            </div>
-        </div>
+
+        
     
 
     
@@ -797,25 +746,22 @@
 
 
 
-            </div>
-            
-            <footer class="footer">
-                <div class="content has-text-centered">
-                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a></p>
-                    <p class="sidebar-created-by">
-                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
-                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
-                    </p>
-                </div>
-            </footer>
-            
-        </div>
-        <div id="side-nav" class="side-nav">
-        </div>
-    </div>
-<script src="scripts/app.min.js"></script>
-<script>PR.prettyPrint();</script>
-<script src="scripts/linenumber.js"> </script>
+</div>
 
+<br class="clear">
+
+<footer>
+  Powered by <a href='https://jsdoc.app/' target='_blank'>JSDoc</a>, <a href='https://github.com/ankitskvmdam/clean-jsdoc-theme' target='_blank'>clean-jsdoc-theme</a>, <a href='js.org' target='_blank'>js.org</a> and Love
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script>
+var list = [{"title":"DisTube","link":"<a href=\"DisTube.html\">DisTube</a>"},{"title":"DisTube#getQueue","link":"<a href=\"DisTube.html#getQueue\">DisTube &rtrif; getQueue</a>"},{"title":"DisTube#isPaused","link":"<a href=\"DisTube.html#isPaused\">DisTube &rtrif; isPaused</a>"},{"title":"DisTube#isPlaying","link":"<a href=\"DisTube.html#isPlaying\">DisTube &rtrif; isPlaying</a>"},{"title":"DisTube#jump","link":"<a href=\"DisTube.html#jump\">DisTube &rtrif; jump</a>"},{"title":"DisTube#pause","link":"<a href=\"DisTube.html#pause\">DisTube &rtrif; pause</a>"},{"title":"DisTube#play","link":"<a href=\"DisTube.html#play\">DisTube &rtrif; play</a>"},{"title":"DisTube#resume","link":"<a href=\"DisTube.html#resume\">DisTube &rtrif; resume</a>"},{"title":"DisTube#setRepeatMode","link":"<a href=\"DisTube.html#setRepeatMode\">DisTube &rtrif; setRepeatMode</a>"},{"title":"DisTube#setVolume","link":"<a href=\"DisTube.html#setVolume\">DisTube &rtrif; setVolume</a>"},{"title":"DisTube#shuffle","link":"<a href=\"DisTube.html#shuffle\">DisTube &rtrif; shuffle</a>"},{"title":"DisTube#skip","link":"<a href=\"DisTube.html#skip\">DisTube &rtrif; skip</a>"},{"title":"DisTube#stop","link":"<a href=\"DisTube.html#stop\">DisTube &rtrif; stop</a>"},{"title":"DisTube#toggleAutoplay","link":"<a href=\"DisTube.html#toggleAutoplay\">DisTube &rtrif; toggleAutoplay</a>"},{"title":"Queue","link":"<a href=\"Queue.html\">Queue</a>"},{"title":"Song","link":"<a href=\"Song.html\">Song</a>"},{"title":"addList","link":"<a href=\"DisTube.html#event:addList\">addList</a>"},{"title":"addSong","link":"<a href=\"DisTube.html#event:addSong\">addSong</a>"},{"title":"empty","link":"<a href=\"DisTube.html#event:empty\">empty</a>"},{"title":"error","link":"<a href=\"DisTube.html#event:error\">error</a>"},{"title":"finish","link":"<a href=\"DisTube.html#event:finish\">finish</a>"},{"title":"noRelated","link":"<a href=\"DisTube.html#event:noRelated\">noRelated</a>"},{"title":"playList","link":"<a href=\"DisTube.html#event:playList\">playList</a>"},{"title":"playSong","link":"<a href=\"DisTube.html#event:playSong\">playSong</a>"},{"title":"searchCancel","link":"<a href=\"DisTube.html#event:searchCancel\">searchCancel</a>"},{"title":"searchResult","link":"<a href=\"DisTube.html#event:searchResult\">searchResult</a>"},{"title":"stop","link":"<a href=\"DisTube.html#event:stop\">stop</a>"}];
+setupSearch(list)
+</script>
+
+ 
+<script type="text/javascript" src="scripts/misc.js"></script>
 </body>
 </html>

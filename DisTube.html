@@ -1,132 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> DisTube</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+      
+        <meta name="author" content="Skick">
+      
+        <meta name="description" content="A Discord.js v12 module to easily manage music commands and play Youtube song on Discord without any API key.">
+      
+    
+    <title>DisTube</title>
 
-  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="./build/entry.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
-  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
-  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
-  <link type="text/css" rel="stylesheet" href="">
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/search.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.5/fuse.min.js"></script> -->
+    <script src="scripts/fuse.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/clean-jsdoc-theme.css">
+    
+    
+    
+<svg aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+    <defs>
+        <symbol id="copy-icon" viewbox="0 0 488.3 488.3">
+            <g>
+                <path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/>
+                <path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/>
+            </g>
+        </symbol>
+    </defs>
+</svg>
 
-  
 </head>
+<body>
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
 
+<label for="nav-trigger" class="overlay"></label>
 
+<nav>
+    <h2><a href="index.html"><div class="text">DisTube</div></a></h2><div class="search-box"><input type="text" placeholder="Search..." id="search-box" /><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-list-div"><ul><li><a href='https://www.npmjs.com/package/distube' class='' id='' target='_blank'>NPM</a></li><li><a href='https://github.com/skick1234/DisTube/' class='' id='' target='_blank'>Github</a></li></ul><h3>Classes</h3><ul><li><a href="DisTube.html">DisTube</a><ul class='methods'><li data-type='method'><a href="DisTube.html#getQueue">getQueue</a></li><li data-type='method'><a href="DisTube.html#isPaused">isPaused</a></li><li data-type='method'><a href="DisTube.html#isPlaying">isPlaying</a></li><li data-type='method'><a href="DisTube.html#jump">jump</a></li><li data-type='method'><a href="DisTube.html#pause">pause</a></li><li data-type='method'><a href="DisTube.html#play">play</a></li><li data-type='method'><a href="DisTube.html#resume">resume</a></li><li data-type='method'><a href="DisTube.html#setRepeatMode">setRepeatMode</a></li><li data-type='method'><a href="DisTube.html#setVolume">setVolume</a></li><li data-type='method'><a href="DisTube.html#shuffle">shuffle</a></li><li data-type='method'><a href="DisTube.html#skip">skip</a></li><li data-type='method'><a href="DisTube.html#stop">stop</a></li><li data-type='method'><a href="DisTube.html#toggleAutoplay">toggleAutoplay</a></li></ul></li><li><a href="Queue.html">Queue</a></li><li><a href="Song.html">Song</a></li></ul><h3>Events</h3><ul><li><a href="DisTube.html#event:addList">addList</a></li><li><a href="DisTube.html#event:addSong">addSong</a></li><li><a href="DisTube.html#event:empty">empty</a></li><li><a href="DisTube.html#event:error">error</a></li><li><a href="DisTube.html#event:finish">finish</a></li><li><a href="DisTube.html#event:noRelated">noRelated</a></li><li><a href="DisTube.html#event:playList">playList</a></li><li><a href="DisTube.html#event:playSong">playSong</a></li><li><a href="DisTube.html#event:searchCancel">searchCancel</a></li><li><a href="DisTube.html#event:searchResult">searchResult</a></li><li><a href="DisTube.html#event:stop">stop</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+</nav>
 
-<body class="layout small-header">
-    <div id="stickyNavbarOverlay"></div>
+<div id="main">
+    
+    <h1 class="page-title">DisTube</h1>
     
 
-<div class="top-nav">
-    <div class="inner">
-        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-        <div class="logo">
-            
-             
-                <a href="index.html">
-                    <h1 class="navbar-item">DisTube</h1>
-                </a>
-            
-        </div>
-        <div class="menu">
-            
-            <div class="navigation">
-                <a
-                    href="index.html"
-                    class="link"
-                >
-                    API Documentation
-                </a>
-                
-                
-                
-            </div>
-        </div>
-    </div>
-</div>
-    <div id="main">
-        <div
-            class="sidebar "
-            id="sidebarNav"
-        >
-            
-            <nav>
-                
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="DisTube.html">DisTube</a></li><li><a href="Queue.html">Queue</a></li><li><a href="Song.html">Song</a></li></ul><h3>Events</h3><ul><li><a href="DisTube.html#event:addList">addList</a></li><li><a href="DisTube.html#event:addSong">addSong</a></li><li><a href="DisTube.html#event:empty">empty</a></li><li><a href="DisTube.html#event:error">error</a></li><li><a href="DisTube.html#event:finish">finish</a></li><li><a href="DisTube.html#event:noRelated">noRelated</a></li><li><a href="DisTube.html#event:playList">playList</a></li><li><a href="DisTube.html#event:playSong">playSong</a></li><li><a href="DisTube.html#event:searchCancel">searchCancel</a></li><li><a href="DisTube.html#event:searchResult">searchResult</a></li><li><a href="DisTube.html#event:stop">stop</a></li></ul><h3><a href="global.html">Global</a></h3></div>
-                
-            </nav>
-        </div>
-        <div class="core" id="main-content-wrapper">
-            <div class="content">
-                <header class="page-title">
-                    <p>Class</p>
-                    <h1>DisTube</h1>
-                </header>
-                
+    
 
 
 
 
 <section>
 
+
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>DisTube<span class="signature">(client, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+        <h2>
+        
+        DisTube
+        
+        </h2>
+        
         
             <div class="class-description"><p>Class representing a DisTube.</p></div>
+            <hr/>
         
     
 </header>
+
 
 <article>
     <div class="container-overview">
     
         
-            <div class='vertical-section'>
-                <div class="members">
-                    <div class="member">
-                        <div class=name>
-                            <span class="tag">Constructor</span>
-                        </div>
-                        
-
 
     
-    <h4 class="name" id="DisTube">
-        <a class="href-link" href="#DisTube">#</a>
-        
-        <span class="code-name">
-            
-                new DisTube<span class="signature">(client, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
+        <h2>Constructor</h2>
     
 
+    <h4 class="name" id="DisTube"><span class="type-signature"></span>new DisTube<span class="signature">(client, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
     
-    
+
+
+
     <div class="description">
         <p>Create new DisTube.</p>
     </div>
-    
 
 
 
@@ -136,113 +108,111 @@
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-            <th>Attributes</th>
-            
-
-            
-            <th>Default</th>
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>client</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>client</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Client</span>
 
 
-  
-  </td>
-
-  
-      <td class="attributes">
-      
-
-      
-
-      
-      </td>
-  
-
-  
-      <td class="default">
-      
-      </td>
-  
-
-  <td class="description last"><p>Discord.JS client</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>options</code></td>
-  
+                <td class="attributes">
+                
 
-  <td class="type">
-  
-      
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Discord.JS client</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><a href="global.html#DisTubeOptions">DisTubeOptions</a></span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
-      <td class="attributes">
-      
-          &lt;optional><br>
-      
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
-      
+                
 
-      
-      </td>
-  
+                
+                </td>
+            
 
-  
-      <td class="default">
-      
-          {}
-      
-      </td>
-  
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
-  <td class="description last"><p>Custom DisTube options</p></td>
-</tr>
+            <td class="description last"><p>Custom DisTube options</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -273,6 +243,7 @@
     
 
     
+
     
 
     
@@ -296,20 +267,17 @@
 
 
 
-
-
-
-
-
-
-
-                    </div>
-                </div>
-            </div>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
+    <pre class="prettyprint"><code>const Discord = require('discord.js'),    DisTube = require('distube'),    client = new Discord.Client(), // Create a new DisTube and make it access easilyclient.DisTube = new DisTube(client, { searchSongs: true });</code></pre>
+
+    </div>
+
+
     
     </div>
-    
+
     
         <h3 class="subsection-title">Extends</h3>
 
@@ -327,35 +295,16 @@
 
     
 
-    
+     
 
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
-    
-        <div class='vertical-section'>
-            <h1>Members</h1>
-            <div class="members">
-            
-                <div class="member">
-
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">Discord.Client</span>
-
-
-    </span>
-
-<h4 class="name" id="client">
-    <a class="href-link" href="#client">#</a>
-    
-    <span class="code-name">
-        client
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="client"><span class="type-signature"></span>client<span class="type-signature"> :Discord.Client</span></h4>
 
 
 
@@ -366,6 +315,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">Discord.Client</span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -393,6 +356,7 @@
     
 
     
+
     
 
     
@@ -406,26 +370,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type">Array.&lt;<a href="Queue.html">Queue</a>></span>
-
-
-    </span>
-
-<h4 class="name" id="guilds">
-    <a class="href-link" href="#guilds">#</a>
-    
-    <span class="code-name">
-        guilds
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="guilds"><span class="type-signature"></span>guilds<span class="type-signature"> :Array.&lt;<a href="Queue.html">Queue</a>></span></h4>
 
 
 
@@ -436,6 +384,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;<a href="Queue.html">Queue</a>></span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -463,6 +425,7 @@
     
 
     
+
     
 
     
@@ -476,26 +439,10 @@
 
 
 
-</div>
-            
-                <div class="member">
 
-    <span class="method-parameter is-pulled-right">
-        <label>Type:</label>
         
-<span class="param-type"><a href="global.html#DisTubeOptions">DisTubeOptions</a></span>
-
-
-    </span>
-
-<h4 class="name" id="options">
-    <a class="href-link" href="#options">#</a>
-    
-    <span class="code-name">
-        options
-    </span>
-    
-</h4>
+            
+<h4 class="name" id="options"><span class="type-signature"></span>options<span class="type-signature"> :<a href="global.html#DisTubeOptions">DisTubeOptions</a></span></h4>
 
 
 
@@ -506,6 +453,20 @@
 
 
 
+    <div class="member-item-container flex">
+        <strong>Type: </strong>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="global.html#DisTubeOptions">DisTubeOptions</a></span>
+
+
+            </li>
+        </ul>
+    </div>
+
+
+
 
 
 <dl class="details">
@@ -533,6 +494,7 @@
     
 
     
+
     
 
     
@@ -546,38 +508,27 @@
 
 
 
-</div>
-            
-            </div>
-        </div>
-    
 
-    
-        <div class='vertical-section'>
-            <h1>Methods</h1>
-            <div class="members">
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="getQueue">
-        <a class="href-link" href="#getQueue">#</a>
         
-        <span class="code-name">
-            
-                getQueue<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span>
-            
-        </span>
-    </h4>
     
 
     
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
     
+
+    <h4 class="name" id="getQueue"><span class="type-signature"></span>getQueue<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span></h4>
+
+    
+
+
+
     <div class="description">
         <p>Get the guild queue</p>
     </div>
-    
 
 
 
@@ -587,56 +538,56 @@
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -667,6 +618,7 @@
     
 
     
+
     
 
     
@@ -688,62 +640,54 @@
 
 
 
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>The guild queue</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The guild queue</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="isPaused">
-        <a class="href-link" href="#isPaused">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "queue") {        let queue = client.DisTube.getQueue(message);        message.channel.send('Current queue:\n' + queue.songs.map((song, id) =>            `**${id+1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``;        ));    }});</code></pre>
+
+    </div>
+
+
+        
             
-                isPaused<span class="signature">(message)</span><span class="type-signature"> &rarr; {boolean}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="isPaused"><span class="type-signature"></span>isPaused<span class="signature">(message)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Whether or not the guild queue is paused</p>
     </div>
-    
 
 
 
@@ -753,56 +697,56 @@
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel to check</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel to check</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -833,6 +777,7 @@
     
 
     
+
     
 
     
@@ -854,62 +799,47 @@
 
 
 
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>Whether or not the guild queue is paused</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>Whether or not the guild queue is paused</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type">boolean</span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
 
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="isPlaying">
-        <a class="href-link" href="#isPlaying">#</a>
         
-        <span class="code-name">
             
-                isPlaying<span class="signature">(message)</span><span class="type-signature"> &rarr; {boolean}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="isPlaying"><span class="type-signature"></span>isPlaying<span class="signature">(message)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Whether or not a guild is playing song(s)</p>
     </div>
-    
 
 
 
@@ -919,56 +849,56 @@
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel to check</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel to check</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -999,6 +929,7 @@
     
 
     
+
     
 
     
@@ -1020,63 +951,48 @@
 
 
 
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>Whether or not the guild is playing song(s)</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>Whether or not the guild is playing song(s)</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type">boolean</span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
 
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="jump">
-        <a class="href-link" href="#jump">#</a>
         
-        <span class="code-name">
             
-                jump<span class="signature">(message, num)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="jump"><span class="type-signature"></span>jump<span class="signature">(message, num)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Jump to the song number in the queue.
 The next one is 1,...</p>
     </div>
-    
 
 
 
@@ -1086,81 +1002,79 @@ The next one is 1,...</p>
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>num</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>num</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">number</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The song number to play</p></td>
-</tr>
+            <td class="description last"><p>The song number to play</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -1191,6 +1105,7 @@ The next one is 1,...</p>
     
 
     
+
     
 
     
@@ -1210,85 +1125,85 @@ The next one is 1,...</p>
 
 
 
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Throws:</label></div>
-        <div class="column is-10">
-            
-                    
-<div class="columns">
+    <strong>Throws:</strong>
     
-    <div class='param-desc column is-7'><p>if <code>num</code> is invalid number <code>(0 &lt; num &lt; <a href="Queue.html#songs">Queue#songs</a>.length)</code></p></div>
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>if <code>num</code> is invalid number <code>(0 &lt; num &lt; <a href="Queue.html#songs">Queue#songs</a>.length)</code></p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
 <span class="param-type">InvalidSong</span>
 
 
-    </div>
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
     
+
+
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
+            
+<div class="param-desc">
+    <p>The guild queue</p>
 </div>
 
-                
-        </div>
-    </div>
 
 
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
-            
-                    
-
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The guild queue</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="pause">
-        <a class="href-link" href="#pause">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "jump")        client.DisTube.jump(message, parseInt(args[0]))            .catch(err => message.channel.send("Invalid song number."));});</code></pre>
+
+    </div>
+
+
+        
             
-                pause<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="pause"><span class="type-signature"></span>pause<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Pause the guild stream</p>
     </div>
-    
 
 
 
@@ -1298,56 +1213,56 @@ The next one is 1,...</p>
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -1378,6 +1293,7 @@ The next one is 1,...</p>
     
 
     
+
     
 
     
@@ -1397,152 +1313,160 @@ The next one is 1,...</p>
 
 
 
+    <strong>Throws:</strong>
+    
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>No playing queue</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">NotPlaying</span>
 
 
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
 
 
+    
 
 
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>The guild queue</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The guild queue</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
 
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="play">
-        <a class="href-link" href="#play">#</a>
         
             
-                <span class='tag'>async</span>
-            
-        
-        <span class="code-name">
-            
-                play<span class="signature">(message, song)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="play"><span class="type-signature">(async) </span>play<span class="signature">(message, song)</span><span class="type-signature"></span></h4>
+
     
+
+
+
     <div class="description">
-        <p>Search and play a song.</p>
+        <p>Play / add a song from Youtube video url or playlist from Youtube playlist url. Search and play a song if it is not a valid url.</p>
     </div>
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
         <tr>
             
-            <th>Name</th>
+                <td class="name"><code>message</code></td>
             
 
-            <th>Type</th>
-
+            <td class="type">
             
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
-
-  <td class="type">
-  
-      
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>song</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>song</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">string</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The string to search for</p></td>
-</tr>
+            <td class="description last"><p><code>Youtube video url</code>|<code>Youtube playlist url</code>|<code>The string to search for</code></p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -1573,6 +1497,7 @@ The next one is 1,...</p>
     
 
     
+
     
 
     
@@ -1586,6 +1511,24 @@ The next one is 1,...</p>
 
 
 
+    <div class="method-member-container flex w-100 overflow-auto mt-20">
+        <strong>Fires:</strong>
+            <ul>
+                
+                    <li><a href="DisTube.html#event:playSong">DisTube#event:playSong</a></li>
+                
+                    <li><a href="DisTube.html#event:addSong">DisTube#event:addSong</a></li>
+                
+                    <li><a href="DisTube.html#event:playList">DisTube#event:playList</a></li>
+                
+                    <li><a href="DisTube.html#event:addList">DisTube#event:addList</a></li>
+                
+                    <li><a href="DisTube.html#event:searchResult">DisTube#event:searchResult</a></li>
+                
+                    <li><a href="DisTube.html#event:searchCancel">DisTube#event:searchCancel</a></li>
+                
+            </ul>
+    </div>
 
 
 
@@ -1593,59 +1536,92 @@ The next one is 1,...</p>
 
 
 
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Throws:</label></div>
-        <div class="column is-10">
-            
-                    
-<div class="columns">
+    <strong>Throws:</strong>
     
-    <div class='param-desc column is-7'><p>if user not in a voice channel</p></div>
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+        <ul>
+            
+                <li>
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>if user not in a voice channel</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
 <span class="param-type">NotInVoice</span>
 
 
-    </div>
-    
-</div>
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
 
-                
+</li>
+            
+                <li>
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>if result is empty</p>
         </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">NotFound</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+</li>
+            
+        </ul>
+    
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "play")        client.DisTube.play(message, args.join(" "));});</code></pre>
+
     </div>
 
 
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="resume">
-        <a class="href-link" href="#resume">#</a>
         
-        <span class="code-name">
             
-                resume<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="resume"><span class="type-signature"></span>resume<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Resume the guild stream</p>
     </div>
-    
 
 
 
@@ -1655,56 +1631,56 @@ The next one is 1,...</p>
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -1735,6 +1711,7 @@ The next one is 1,...</p>
     
 
     
+
     
 
     
@@ -1754,66 +1731,80 @@ The next one is 1,...</p>
 
 
 
+    <strong>Throws:</strong>
+    
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>No playing queue</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">NotPlaying</span>
 
 
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
 
 
+    
 
 
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>The guild queue</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The guild queue</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
 
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="setRepeatMode">
-        <a class="href-link" href="#setRepeatMode">#</a>
         
-        <span class="code-name">
             
-                setRepeatMode<span class="signature">(message, type)</span><span class="type-signature"> &rarr; {number}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="setRepeatMode"><span class="type-signature"></span>setRepeatMode<span class="signature">(message, mode)</span><span class="type-signature"> &rarr; {number}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Set the repeat mode of the guild queue.
 Turn off if repeat mode is the same value as type.
 Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code></p>
     </div>
-    
 
 
 
@@ -1823,93 +1814,91 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-            <th>Default</th>
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-      <td class="default">
-      
-      </td>
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>type</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mode</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">number</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
-      <td class="default">
-      
-          null
-      
-      </td>
-  
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
 
-  <td class="description last"><p>The type of repeat mode <code>(0: disabled, 1: Repeat a song, 2: Repeat all the queue)</code></p></td>
-</tr>
+            <td class="description last"><p>The type of repeat mode <code>(0: disabled, 1: Repeat a song, 2: Repeat all the queue)</code></p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -1940,6 +1929,7 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
     
 
     
+
     
 
     
@@ -1961,62 +1951,54 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>Type of repeat mode</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>Type of repeat mode</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type">number</span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="setVolume">
-        <a class="href-link" href="#setVolume">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "repeat") {        let mode = client.DisTube.setRepeatMode(message, parseInt(args[0]));        mode = mode ? mode == 2 ? "Repeat queue" : "Repeat song" : "Off";        message.channel.send("Set repeat mode to `" + mode + "`");    }});</code></pre>
+
+    </div>
+
+
+        
             
-                setVolume<span class="signature">(message, percent)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="setVolume"><span class="type-signature"></span>setVolume<span class="signature">(message, percent)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Set the guild stream's volume</p>
     </div>
-    
 
 
 
@@ -2026,81 +2008,79 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>percent</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>percent</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">number</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The percentage of volume you want to set</p></td>
-</tr>
+            <td class="description last"><p>The percentage of volume you want to set</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -2131,6 +2111,7 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
     
 
     
+
     
 
     
@@ -2150,64 +2131,85 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
+    <strong>Throws:</strong>
+    
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>No playing queue</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">NotPlaying</span>
 
 
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
 
 
+    
 
 
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>The guild queue</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The guild queue</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="shuffle">
-        <a class="href-link" href="#shuffle">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "volume")        client.DisTube.setVolume(message, args[0]);});</code></pre>
+
+    </div>
+
+
+        
             
-                shuffle<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="shuffle"><span class="type-signature"></span>shuffle<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Shuffle the guild queue songs</p>
     </div>
-    
 
 
 
@@ -2217,56 +2219,56 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -2297,6 +2299,7 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
     
 
     
+
     
 
     
@@ -2318,62 +2321,54 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>The guild queue</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The guild queue</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="skip">
-        <a class="href-link" href="#skip">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "shuffle")        client.DisTube.shuffle(message);});</code></pre>
+
+    </div>
+
+
+        
             
-                skip<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="skip"><span class="type-signature"></span>skip<span class="signature">(message)</span><span class="type-signature"> &rarr; {<a href="Queue.html">Queue</a>}</span></h4>
+
     
+
+
+
     <div class="description">
         <p>Skip the playing song</p>
     </div>
-    
 
 
 
@@ -2383,56 +2378,56 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -2463,6 +2458,7 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
     
 
     
+
     
 
     
@@ -2482,85 +2478,116 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Throws:</label></div>
-        <div class="column is-10">
-            
-                    
-<div class="columns">
+    <strong>Throws:</strong>
     
-    <div class='param-desc column is-7'><p>if there is no song in queue</p></div>
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+        <ul>
+            
+                <li>
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>No playing queue</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">NotPlaying</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+</li>
+            
+                <li>
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>if there is no song in queue</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
 <span class="param-type">NoSong</span>
 
 
-    </div>
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+</li>
+            
+        </ul>
     
+
+
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
+            
+<div class="param-desc">
+    <p>The guild queue</p>
 </div>
 
-                
-        </div>
-    </div>
 
 
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
-            
-                    
-
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The guild queue</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="stop">
-        <a class="href-link" href="#stop">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "skip")        client.DisTube.skip(message);});</code></pre>
+
+    </div>
+
+
+        
             
-                stop<span class="signature">(message)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="stop"><span class="type-signature"></span>stop<span class="signature">(message)</span><span class="type-signature"></span></h4>
+
     
+
+
+
     <div class="description">
         <p>Stop the guild stream</p>
     </div>
-    
 
 
 
@@ -2570,56 +2597,56 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -2650,6 +2677,7 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
     
 
     
+
     
 
     
@@ -2669,39 +2697,61 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-
-
-
-
-
-
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
+    <strong>Throws:</strong>
     
-    <h4 class="name" id="toggleAutoplay">
-        <a class="href-link" href="#toggleAutoplay">#</a>
         
-        <span class="code-name">
-            
-                toggleAutoplay<span class="signature">(message)</span><span class="type-signature"> &rarr; {boolean}</span>
-            
-        </span>
-    </h4>
-    
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>No playing queue</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">NotPlaying</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
 
     
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "stop")        client.DisTube.stop(message);});</code></pre>
+
+    </div>
+
+
+        
+            
+
     
+
+    <h4 class="name" id="toggleAutoplay"><span class="type-signature"></span>toggleAutoplay<span class="signature">(message)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
     <div class="description">
         <p>Toggle autoplay Mode</p>
     </div>
-    
 
 
 
@@ -2711,56 +2761,56 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -2791,6 +2841,7 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
     
 
     
+
     
 
     
@@ -2810,76 +2861,93 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
+    <strong>Throws:</strong>
+    
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        <p>No playing queue</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">NotPlaying</span>
 
 
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
 
 
+    
 
 
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
             
-                    
+<div class="param-desc">
+    <p>Autoplay mode state</p>
+</div>
 
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>Autoplay mode state</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
         
 <span class="param-type">boolean</span>
 
 
-    </div>
-    
-</div>
-
-                
-        </div>
+    </dd>
+</dl>
+ 
     </div>
 
 
 
-
-</div>
-            
-            </div>
-        </div>
-    
-
-    
-
-    
-        <div class='vertical-section'>
-            <h1>Events</h1>
-            <div class="members">
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:addList">
-        <a class="href-link" href="#event:addList">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
-            
-                addList
-            
-        </span>
-    </h4>
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "autoplay") {        let mode = client.DisTube.toggleAutoplay(message);        message.channel.send("Set autoplay mode to `" + mode ? "On" : "Off" + "`");    }});</code></pre>
+
+    </div>
+
+
+        
     
 
     
+
     
+        <h3 class="subsection-title">Events</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:addList">addList</h4>
+
+    
+
+
+
     <div class="description">
         <p>Emitted after DisTube add playlist to guild queue</p>
     </div>
-    
 
 
 
@@ -2889,274 +2957,102 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>playlist</code></td>
-  
 
-  <td class="type">
-  
-      
-<span class="param-type"><a href="global.html#ytpl_result">ytpl_result</a></span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Playlist info</p></td>
-</tr>
-
-
-        
-        </tbody>
-    </table>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                </div>
             
-                <div class="member">
-                    
 
-
-    
-    <h4 class="name" id="event:addSong">
-        <a class="href-link" href="#event:addSong">#</a>
-        
-        <span class="code-name">
-            
-                addSong
-            
-        </span>
-    </h4>
-    
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
     
-    
-    <div class="description">
-        <p>Emitted after DisTube add new song to guild queue</p>
-    </div>
-    
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
         <tr>
             
-            <th>Name</th>
+                <td class="name"><code>queue</code></td>
             
 
-            <th>Type</th>
-
+            <td class="type">
             
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Discord.Message</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>queue</code></td>
-  
-
-  <td class="type">
-  
-      
+                
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The guild queue</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>song</code></td>
-  
 
-  <td class="type">
-  
-      
-<span class="param-type"><a href="Song.html">Song</a></span>
+            
 
+            <td class="description last"><p>The guild queue</p></td>
+        </tr>
 
-  
-  </td>
+    
 
-  
+        <tr>
+            
+                <td class="name"><code>playlist</code></td>
+            
 
-  
-
-  <td class="description last"><p>Added song</p></td>
-</tr>
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#ytpl_result">ytpl_result</a></span>
 
 
-        
-        </tbody>
-    </table>
-</div>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Playlist info</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
 
 
 
@@ -3187,6 +3083,7 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
     
 
     
+
     
 
     
@@ -3210,38 +3107,210 @@ Toogle mode: <code>type = null</code> <code>(0 -&gt; 1 -&gt; 2 -&gt; 0...)</code
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:empty">
-        <a class="href-link" href="#event:empty">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;client.DisTube.on("addList", (message, queue, playlist) => message.channel.send(    `Added \`${playlist.title}\` playlist (${playlist.total_items} songs) to queue\n${status(queue)}`));</code></pre>
+
+    </div>
+
+
+        
             
-                empty
+
+    
+
+    <h4 class="name" id="event:addSong">addSong</h4>
+
+    
+
+
+
+    <div class="description">
+        <p>Emitted after DisTube add new song to guild queue</p>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
             
-        </span>
-    </h4>
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord.Message</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>queue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Queue.html">Queue</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The guild queue</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>song</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Song.html">Song</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Added song</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;client.DisTube.on("addSong", (message, queue, song) => message.channel.send(    `Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`));</code></pre>
+
+    </div>
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:empty">empty</h4>
+
+    
+
+
+
     <div class="description">
         <p>Emitted when there is no user in VoiceChannel.
 DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.leaveOnEmpty</code> is <code>true</code></p>
     </div>
-    
 
 
 
@@ -3251,56 +3320,56 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -3331,6 +3400,7 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
     
 
     
+
     
 
     
@@ -3355,36 +3425,20 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:error">
-        <a class="href-link" href="#event:error">#</a>
         
-        <span class="code-name">
             
-                error
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="event:error">error</h4>
+
     
+
+
+
     <div class="description">
         <p>Emitted when <code><a href="DisTube.html">DisTube</a></code> encounters an error.</p>
     </div>
-    
 
 
 
@@ -3394,81 +3448,79 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>err</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>err</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Error</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The error encountered</p></td>
-</tr>
+            <td class="description last"><p>The error encountered</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -3499,6 +3551,7 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
     
 
     
+
     
 
     
@@ -3522,38 +3575,29 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:finish">
-        <a class="href-link" href="#event:finish">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.DisTube.on("error", (message, err) => message.channel.send(    "An error encountered: " + err));</code></pre>
+
+    </div>
+
+
+        
             
-                finish
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="event:finish">finish</h4>
+
     
+
+
+
     <div class="description">
         <p>Emitted when there is no more song in the queue and <a href="Queue.html#autoplay">Queue#autoplay</a> is <code>false</code>.
 DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.leaveOnFinish</code> is <code>true</code></p>
     </div>
-    
 
 
 
@@ -3563,56 +3607,56 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -3643,6 +3687,7 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
     
 
     
+
     
 
     
@@ -3666,38 +3711,29 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:noRelated">
-        <a class="href-link" href="#event:noRelated">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.DisTube.on("finish", message => message.channel.send("No more song in queue"));</code></pre>
+
+    </div>
+
+
+        
             
-                noRelated
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="event:noRelated">noRelated</h4>
+
     
+
+
+
     <div class="description">
         <p>Emitted when <code><a href="Queue.html#autoplay">Queue#autoplay</a></code> is <code>true</code>, the <code><a href="Queue.html#songs">Queue#songs</a></code> is empty and
 DisTube cannot find related songs to play</p>
     </div>
-    
 
 
 
@@ -3707,56 +3743,56 @@ DisTube cannot find related songs to play</p>
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -3787,6 +3823,7 @@ DisTube cannot find related songs to play</p>
     
 
     
+
     
 
     
@@ -3810,38 +3847,29 @@ DisTube cannot find related songs to play</p>
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:playList">
-        <a class="href-link" href="#event:playList">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>client.DisTube.on("noRelated", message => message.channel.send("Can't find related video to play. Stop playing music."));</code></pre>
+
+    </div>
+
+
+        
             
-                playList
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="event:playList">playList</h4>
+
     
+
+
+
     <div class="description">
         <p>Emitted after DisTube play the first song of the playlist
 and add the rest to the guild queue</p>
     </div>
-    
 
 
 
@@ -3851,131 +3879,125 @@ and add the rest to the guild queue</p>
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>queue</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>queue</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The guild queue</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>playlist</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The guild queue</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>playlist</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><a href="global.html#ytpl_result">ytpl_result</a></span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Playlist info</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>song</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>Playlist info</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>song</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><a href="Song.html">Song</a></span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>Playing song</p></td>
-</tr>
+            <td class="description last"><p>Playing song</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -4006,6 +4028,7 @@ and add the rest to the guild queue</p>
     
 
     
+
     
 
     
@@ -4029,37 +4052,28 @@ and add the rest to the guild queue</p>
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:playSong">
-        <a class="href-link" href="#event:playSong">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;client.DisTube.on("playList", (message, queue, playlist, song) => message.channel.send(    `Play \`${playlist.title}\` playlist (${playlist.total_items} songs).\nRequested by: ${song.user}\nNow playing \`${song.name}\` - \`${song.formattedDuration}\`\n${status(queue)}`));</code></pre>
+
+    </div>
+
+
+        
             
-                playSong
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="event:playSong">playSong</h4>
+
     
+
+
+
     <div class="description">
         <p>Emitted when DisTube play a new song</p>
     </div>
-    
 
 
 
@@ -4069,106 +4083,102 @@ and add the rest to the guild queue</p>
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>queue</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>queue</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><a href="Queue.html">Queue</a></span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The guild queue</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>song</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The guild queue</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>song</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type"><a href="Song.html">Song</a></span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>Playing song</p></td>
-</tr>
+            <td class="description last"><p>Playing song</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -4199,6 +4209,7 @@ and add the rest to the guild queue</p>
     
 
     
+
     
 
     
@@ -4222,97 +4233,88 @@ and add the rest to the guild queue</p>
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:searchCancel">
-        <a class="href-link" href="#event:searchCancel">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
-            
-                searchCancel
-            
-        </span>
-    </h4>
-    
+    <pre class="prettyprint"><code>const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;client.DisTube.on("playSong", (message, queue, song) => message.channel.send(    `Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${song.user}\n${status(queue)}`));</code></pre>
 
-    
-    
-    <div class="description">
-        <p>Emitted when <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.searchSongs</code> is <code>true</code> and
-search is canceled if user's next message is invalid number or timeout (60s)</p>
     </div>
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:searchCancel">searchCancel</h4>
+
     
 
 
 
+    <div class="description">
+        <p>Emitted when <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.searchSongs</code> is <code>true</code>.
+Search will be canceled if user's next message is invalid number or timeout (60s)</p>
+    </div>
 
 
 
 
 
 
-    <h5>Parameters:</h5>
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
-<div class="table-container">
-    <table class="params table">
-        <thead>
+
         <tr>
             
-            <th>Name</th>
+                <td class="name"><code>message</code></td>
             
 
-            <th>Type</th>
-
+            <td class="type">
             
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
-
-  <td class="type">
-  
-      
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -4343,6 +4345,7 @@ search is canceled if user's next message is invalid number or timeout (60s)</p>
     
 
     
+
     
 
     
@@ -4366,39 +4369,30 @@ search is canceled if user's next message is invalid number or timeout (60s)</p>
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:searchResult">
-        <a class="href-link" href="#event:searchResult">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>// DisTubeOptions.searchSongs = trueclient.DisTube.on("searchCancel", (message) => message.channel.send(`Searching canceled`));</code></pre>
+
+    </div>
+
+
+        
             
-                searchResult
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="event:searchResult">searchResult</h4>
+
     
+
+
+
     <div class="description">
-        <p>Emitted when <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.searchSongs</code> is <code>true</code> and
+        <p>Emitted when <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.searchSongs</code> is <code>true</code>.
 DisTube will wait for user's next message to choose song manually
-if song param of <a href="DisTube.html#play">DisTube#play</a>() is not a valid url</p>
+if song param of <a href="DisTube.html#play">DisTube#play</a>() is invalid url</p>
     </div>
-    
 
 
 
@@ -4408,81 +4402,79 @@ if song param of <a href="DisTube.html#play">DisTube#play</a>() is not a valid u
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
-
-
-        
+            
+            </td>
 
             
-<tr class="deep-level-0">
-  
-      <td class="name"><code>result</code></td>
-  
 
-  <td class="type">
-  
-      
+            
+
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>result</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Array.&lt;<a href="global.html#ytsr_result">ytsr_result</a>></span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>Searched result (max length = 12)</p></td>
-</tr>
+            <td class="description last"><p>Searched result (max length = 12)</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -4513,6 +4505,7 @@ if song param of <a href="DisTube.html#play">DisTube#play</a>() is not a valid u
     
 
     
+
     
 
     
@@ -4536,38 +4529,29 @@ if song param of <a href="DisTube.html#play">DisTube#play</a>() is not a valid u
 
 
 
-
-
-
-
-
-
-
-                </div>
-            
-                <div class="member">
-                    
-
-
-    
-    <h4 class="name" id="event:stop">
-        <a class="href-link" href="#event:stop">#</a>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
         
-        <span class="code-name">
+    <pre class="prettyprint"><code>// DisTubeOptions.searchSongs = trueclient.DisTube.on("searchResult", (message, result) => {    let i = 0;    message.channel.send(`**Choose an option from below**\n${result.map(song => `**${++i}**. ${song.title} - \`${song.duration}\``).join("\n")}\n*Enter anything else or wait 60 seconds to cancel*`);});</code></pre>
+
+    </div>
+
+
+        
             
-                stop
-            
-        </span>
-    </h4>
-    
 
     
+
+    <h4 class="name" id="event:stop">stop</h4>
+
     
+
+
+
     <div class="description">
         <p>Emitted when <code><a href="Queue.html">Queue</a></code> is stopped by <a href="DisTube.html#stop">DisTube#stop</a>().
 DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.leaveOnStop</code> is <code>true</code></p>
     </div>
-    
 
 
 
@@ -4577,56 +4561,56 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
         
 
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>message</code></td>
-  
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  <td class="type">
-  
-      
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Discord.Message</span>
 
 
-  
-  </td>
+            
+            </td>
 
-  
+            
 
-  
+            
 
-  <td class="description last"><p>The message from guild channel</p></td>
-</tr>
+            <td class="description last"><p>The message from guild channel</p></td>
+        </tr>
 
+    
+    </tbody>
+</table>
 
-        
-        </tbody>
-    </table>
-</div>
+    </div>
 
 
 
@@ -4657,6 +4641,7 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
     
 
     
+
     
 
     
@@ -4680,17 +4665,15 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>client.DisTube.on("stop", message => message.channel.send("Stopped music."));</code></pre>
+
+    </div>
 
 
-
-
-
-
-
-                </div>
-            
-            </div>
-        </div>
+        
     
 </article>
 
@@ -4699,25 +4682,22 @@ DisTube will leave voice channel if <code><a href="global.html#DisTubeOptions">D
 
 
 
-            </div>
-            
-            <footer class="footer">
-                <div class="content has-text-centered">
-                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a></p>
-                    <p class="sidebar-created-by">
-                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
-                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
-                    </p>
-                </div>
-            </footer>
-            
-        </div>
-        <div id="side-nav" class="side-nav">
-        </div>
-    </div>
-<script src="scripts/app.min.js"></script>
-<script>PR.prettyPrint();</script>
-<script src="scripts/linenumber.js"> </script>
+</div>
 
+<br class="clear">
+
+<footer>
+  Powered by <a href='https://jsdoc.app/' target='_blank'>JSDoc</a>, <a href='https://github.com/ankitskvmdam/clean-jsdoc-theme' target='_blank'>clean-jsdoc-theme</a>, <a href='js.org' target='_blank'>js.org</a> and Love
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script>
+var list = [{"title":"DisTube","link":"<a href=\"DisTube.html\">DisTube</a>"},{"title":"DisTube#getQueue","link":"<a href=\"DisTube.html#getQueue\">DisTube &rtrif; getQueue</a>"},{"title":"DisTube#isPaused","link":"<a href=\"DisTube.html#isPaused\">DisTube &rtrif; isPaused</a>"},{"title":"DisTube#isPlaying","link":"<a href=\"DisTube.html#isPlaying\">DisTube &rtrif; isPlaying</a>"},{"title":"DisTube#jump","link":"<a href=\"DisTube.html#jump\">DisTube &rtrif; jump</a>"},{"title":"DisTube#pause","link":"<a href=\"DisTube.html#pause\">DisTube &rtrif; pause</a>"},{"title":"DisTube#play","link":"<a href=\"DisTube.html#play\">DisTube &rtrif; play</a>"},{"title":"DisTube#resume","link":"<a href=\"DisTube.html#resume\">DisTube &rtrif; resume</a>"},{"title":"DisTube#setRepeatMode","link":"<a href=\"DisTube.html#setRepeatMode\">DisTube &rtrif; setRepeatMode</a>"},{"title":"DisTube#setVolume","link":"<a href=\"DisTube.html#setVolume\">DisTube &rtrif; setVolume</a>"},{"title":"DisTube#shuffle","link":"<a href=\"DisTube.html#shuffle\">DisTube &rtrif; shuffle</a>"},{"title":"DisTube#skip","link":"<a href=\"DisTube.html#skip\">DisTube &rtrif; skip</a>"},{"title":"DisTube#stop","link":"<a href=\"DisTube.html#stop\">DisTube &rtrif; stop</a>"},{"title":"DisTube#toggleAutoplay","link":"<a href=\"DisTube.html#toggleAutoplay\">DisTube &rtrif; toggleAutoplay</a>"},{"title":"Queue","link":"<a href=\"Queue.html\">Queue</a>"},{"title":"Song","link":"<a href=\"Song.html\">Song</a>"},{"title":"addList","link":"<a href=\"DisTube.html#event:addList\">addList</a>"},{"title":"addSong","link":"<a href=\"DisTube.html#event:addSong\">addSong</a>"},{"title":"empty","link":"<a href=\"DisTube.html#event:empty\">empty</a>"},{"title":"error","link":"<a href=\"DisTube.html#event:error\">error</a>"},{"title":"finish","link":"<a href=\"DisTube.html#event:finish\">finish</a>"},{"title":"noRelated","link":"<a href=\"DisTube.html#event:noRelated\">noRelated</a>"},{"title":"playList","link":"<a href=\"DisTube.html#event:playList\">playList</a>"},{"title":"playSong","link":"<a href=\"DisTube.html#event:playSong\">playSong</a>"},{"title":"searchCancel","link":"<a href=\"DisTube.html#event:searchCancel\">searchCancel</a>"},{"title":"searchResult","link":"<a href=\"DisTube.html#event:searchResult\">searchResult</a>"},{"title":"stop","link":"<a href=\"DisTube.html#event:stop\">stop</a>"}];
+setupSearch(list)
+</script>
+
+ 
+<script type="text/javascript" src="scripts/misc.js"></script>
 </body>
 </html>
