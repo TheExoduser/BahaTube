@@ -669,7 +669,7 @@
     <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
         <strong>Example</strong>
         
-    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "queue") {        let queue = client.DisTube.getQueue(message);        message.channel.send('Current queue:\n' + queue.songs.map((song, id) =>            `**${id+1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``        ));    }});</code></pre>
+    <pre class="prettyprint"><code>client.on('message', (message) => {    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);    const command = args.shift();    if (command == "queue") {        let queue = client.DisTube.getQueue(message);        message.channel.send('Current queue:\n' + queue.songs.map((song, id) =>            `**${id+1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``        ).join("\n"));    }});</code></pre>
 
     </div>
 
@@ -4077,7 +4077,8 @@ and add the rest to the guild queue</p>
 
 
     <div class="description">
-        <p>Emitted when DisTube play a new song</p>
+        <p>Emitted when DisTube play a song.
+If <code><a href="global.html#DisTubeOptions">DisTubeOptions</a>.emitNewSongOnly</code> is <code>true</code>, event is not emitted when looping a song or next song is the previous one</p>
     </div>
 
 
