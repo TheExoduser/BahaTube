@@ -178,11 +178,11 @@ const Discord = require('discord.js'),
     client = new Discord.Client(),
     config = {
         prefix: &quot;.&quot;,
-        token: process.env.TOKEN || &quot;Your Discord Bot Token&quot;
+        token: process.env.TOKEN || &quot;Your Discord Token&quot;
     };
 
-// Create a new DisTube and make it access easily
-client.DisTube = new DisTube(client, { searchSongs: true });
+// Create a new DisTube
+const distube = new DisTube(client, { searchSongs: true, emitNewSongOnly: true });
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -193,45 +193,52 @@ client.on(&quot;message&quot;, async (message) => {
     const command = args.shift();
 
     if (command == &quot;play&quot;)
-        client.DisTube.play(message, args.join(&quot; &quot;));
+        distube.play(message, args.join(&quot; &quot;));
 
     if ([&quot;repeat&quot;, &quot;loop&quot;].includes(command))
-        client.DisTube.setRepeatMode(message, parseInt(args[0]));
+        distube.setRepeatMode(message, parseInt(args[0]));
 
     if (command == &quot;stop&quot;)
-        client.DisTube.stop(message);
+        distube.stop(message);
+
+    if (command == &quot;queue&quot;) {
+        let queue = distube.getQueue(message);
+        message.channel.send('Current queue:\n' + queue.songs.map((song, id) =>
+            `**${id+1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``
+        ).join(&quot;\n&quot;));
+    }
 });
 
 // Queue status template
 const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? &quot;All Queue&quot; : &quot;This Song&quot; : &quot;Off&quot;}\` | Autoplay: \`${queue.autoplay ? &quot;On&quot; : &quot;Off&quot;}\``;
 
 // DisTube event listeners, more in the documentation page
-client.DisTube.on(&quot;playSong&quot;, (message, queue, song) => message.channel.send(
+distube.on(&quot;playSong&quot;, (message, queue, song) => message.channel.send(
     `Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${song.user}\n${status(queue)}`
 ));
 
-client.DisTube.on(&quot;addSong&quot;, (message, queue, song) => message.channel.send(
+distube.on(&quot;addSong&quot;, (message, queue, song) => message.channel.send(
     `Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`
 ));
 
-client.DisTube.on(&quot;playList&quot;, (message, queue, playlist, song) => message.channel.send(
+distube.on(&quot;playList&quot;, (message, queue, playlist, song) => message.channel.send(
     `Play \`${playlist.title}\` playlist (${playlist.total_items} songs).\nRequested by: ${song.user}\nNow playing \`${song.name}\` - \`${song.formattedDuration}\`\n${status(queue)}`
 ));
 
-client.DisTube.on(&quot;addList&quot;, (message, queue, playlist) => message.channel.send(
+distube.on(&quot;addList&quot;, (message, queue, playlist) => message.channel.send(
     `Added \`${playlist.title}\` playlist (${playlist.total_items} songs) to queue\n${status(queue)}`
 ));
 
 // DisTubeOptions.searchSongs = true
-client.DisTube.on(&quot;searchResult&quot;, (message, result) => {
+distube.on(&quot;searchResult&quot;, (message, result) => {
     let i = 0;
     message.channel.send(`**Choose an option from below**\n${result.map(song => `**${++i}**. ${song.title} - \`${song.duration}\``).join(&quot;\n&quot;)}\n*Enter anything else or wait 60 seconds to cancel*`);
 });
 
 // DisTubeOptions.searchSongs = true
-client.DisTube.on(&quot;searchCancel&quot;, (message) => message.channel.send(`Searching canceled`));
+distube.on(&quot;searchCancel&quot;, (message) => message.channel.send(`Searching canceled`));
 
-client.DisTube.on(&quot;error&quot;, (message, err) => message.channel.send(
+distube.on(&quot;error&quot;, (message, err) => message.channel.send(
     &quot;An error encountered: &quot; + err
 ));
 
