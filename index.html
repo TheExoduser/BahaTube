@@ -48,7 +48,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html"><div class="text">DisTube</div></a></h2><div class="search-box"><input type="text" placeholder="Search..." id="search-box" /><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-list-div"><ul><li><a href='https://www.npmjs.com/package/distube' class='' id='' target='_blank'>NPM</a></li><li><a href='https://github.com/skick1234/DisTube/' class='' id='' target='_blank'>Github</a></li></ul><h3>Classes</h3><ul><li><a href="DisTube.html">DisTube</a><ul class='methods'><li data-type='method'><a href="DisTube.html#getQueue">getQueue</a></li><li data-type='method'><a href="DisTube.html#isPaused">isPaused</a></li><li data-type='method'><a href="DisTube.html#isPlaying">isPlaying</a></li><li data-type='method'><a href="DisTube.html#jump">jump</a></li><li data-type='method'><a href="DisTube.html#pause">pause</a></li><li data-type='method'><a href="DisTube.html#play">play</a></li><li data-type='method'><a href="DisTube.html#resume">resume</a></li><li data-type='method'><a href="DisTube.html#runAutoplay">runAutoplay</a></li><li data-type='method'><a href="DisTube.html#setRepeatMode">setRepeatMode</a></li><li data-type='method'><a href="DisTube.html#setVolume">setVolume</a></li><li data-type='method'><a href="DisTube.html#shuffle">shuffle</a></li><li data-type='method'><a href="DisTube.html#skip">skip</a></li><li data-type='method'><a href="DisTube.html#stop">stop</a></li><li data-type='method'><a href="DisTube.html#toggleAutoplay">toggleAutoplay</a></li></ul></li><li><a href="Queue.html">Queue</a></li><li><a href="Song.html">Song</a></li></ul><h3>Events</h3><ul><li><a href="DisTube.html#event:addList">addList</a></li><li><a href="DisTube.html#event:addSong">addSong</a></li><li><a href="DisTube.html#event:empty">empty</a></li><li><a href="DisTube.html#event:error">error</a></li><li><a href="DisTube.html#event:finish">finish</a></li><li><a href="DisTube.html#event:noRelated">noRelated</a></li><li><a href="DisTube.html#event:playList">playList</a></li><li><a href="DisTube.html#event:playSong">playSong</a></li><li><a href="DisTube.html#event:searchCancel">searchCancel</a></li><li><a href="DisTube.html#event:searchResult">searchResult</a></li><li><a href="DisTube.html#event:stop">stop</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+    <h2><a href="index.html"><div class="text">DisTube</div></a></h2><div class="search-box"><input type="text" placeholder="Search..." id="search-box" /><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-list-div"><ul><li><a href='https://www.npmjs.com/package/distube' class='' id='' target='_blank'>NPM</a></li><li><a href='https://github.com/skick1234/DisTube/' class='' id='' target='_blank'>Github</a></li></ul><h3>Classes</h3><ul><li><a href="DisTube.html">DisTube</a><ul class='methods'><li data-type='method'><a href="DisTube.html#getQueue">getQueue</a></li><li data-type='method'><a href="DisTube.html#isPaused">isPaused</a></li><li data-type='method'><a href="DisTube.html#isPlaying">isPlaying</a></li><li data-type='method'><a href="DisTube.html#jump">jump</a></li><li data-type='method'><a href="DisTube.html#pause">pause</a></li><li data-type='method'><a href="DisTube.html#play">play</a></li><li data-type='method'><a href="DisTube.html#playSkip">playSkip</a></li><li data-type='method'><a href="DisTube.html#resume">resume</a></li><li data-type='method'><a href="DisTube.html#runAutoplay">runAutoplay</a></li><li data-type='method'><a href="DisTube.html#search">search</a></li><li data-type='method'><a href="DisTube.html#setFilter">setFilter</a></li><li data-type='method'><a href="DisTube.html#setRepeatMode">setRepeatMode</a></li><li data-type='method'><a href="DisTube.html#setVolume">setVolume</a></li><li data-type='method'><a href="DisTube.html#shuffle">shuffle</a></li><li data-type='method'><a href="DisTube.html#skip">skip</a></li><li data-type='method'><a href="DisTube.html#stop">stop</a></li><li data-type='method'><a href="DisTube.html#toggleAutoplay">toggleAutoplay</a></li></ul></li><li><a href="Queue.html">Queue</a></li><li><a href="Song.html">Song</a></li></ul><h3>Events</h3><ul><li><a href="DisTube.html#event:addList">addList</a></li><li><a href="DisTube.html#event:addSong">addSong</a></li><li><a href="DisTube.html#event:empty">empty</a></li><li><a href="DisTube.html#event:error">error</a></li><li><a href="DisTube.html#event:finish">finish</a></li><li><a href="DisTube.html#event:noRelated">noRelated</a></li><li><a href="DisTube.html#event:playList">playList</a></li><li><a href="DisTube.html#event:playSong">playSong</a></li><li><a href="DisTube.html#event:searchCancel">searchCancel</a></li><li><a href="DisTube.html#event:searchResult">searchResult</a></li></ul><h3><a href="global.html">Global</a></h3></div>
 </nav>
 
 <div id="main">
@@ -96,18 +96,20 @@
 </ul>
 <h5>Song management</h5>
 <ul>
+<li><a href="https://distube.js.org/DisTube.html#play">playSkip(<code>message, string</code>)</a>: same as <a href="https://distube.js.org/DisTube.html#play">play()</a> but it will add new song(s) to the beginning of the queue and skip the playing song.</li>
 <li><a href="https://distube.js.org/DisTube.html#stop">stop(<code>message</code>)</a>: Stop the playing song and clear the queue.</li>
-<li><a href="https://distube.js.org/DisTube.html#jump">jump(<code>message, num</code>)</a>: Jump to the song number in the queue.</li>
 <li><a href="https://distube.js.org/DisTube.html#skip">skip(<code>message</code>)</a>: Skip the current song.</li>
+<li><a href="https://distube.js.org/DisTube.html#jump">jump(<code>message, num</code>)</a>: Jump to the song number in the queue.</li>
 <li><a href="https://distube.js.org/DisTube.html#pause">pause(<code>message</code>)</a>: Pause the playing song.</li>
 <li><a href="https://distube.js.org/DisTube.html#resume">resume(<code>message</code>)</a>: Resume the paused song.</li>
 </ul>
 <h5>Queue management</h5>
 <ul>
+<li><a href="https://distube.js.org/DisTube.html#setFilter">setFilter(<code>message</code>, <code>filter</code>)</a> Toggle a filter of the queue, replay playing song. Available filters: <code>3d</code>, <code>bassboost</code>, <code>echo</code>, <code>karaoke</code>, <code>nightcore</code>, <code>vaporwave</code></li>
 <li><a href="https://distube.js.org/DisTube.html#shuffle">shuffle(<code>message</code>)</a>: Shuffle the server queue.</li>
 <li><a href="https://distube.js.org/DisTube.html#setVolume">setVolume(<code>message, percent</code>)</a>: Set server volume in percentage.</li>
 <li><a href="https://distube.js.org/DisTube.html#setRepeatMode">setRepeatMode(<code>message, type</code>)</a>: Set repeat mode of server <code>(disabled, repeat a song, repeat all the queue)</code>.</li>
-<li><a href="https://distube.js.org/DisTube.html#toggleAutoplay">toggleAutoplay(<code>message</code>)</a>: toggle server's auto-play mode.</li>
+<li><a href="https://distube.js.org/DisTube.html#toggleAutoplay">toggleAutoplay(<code>message</code>)</a>: Toggle server's auto-play mode.</li>
 <li><a href="https://distube.js.org/DisTube.html#getQueue">getQueue(<code>message</code>)</a>: get the server queue.</li>
 <li><a href="https://distube.js.org/DisTube.html#isPaused">isPaused(<code>message</code>)</a>: Whether or not the server queue is paused.</li>
 <li><a href="https://distube.js.org/DisTube.html#isPlaying">isPlaying(<code>message</code>)</a>: Whether or not the bot is playing music in the server.</li>
@@ -144,10 +146,6 @@
 <tr>
 <td><a href="https://distube.js.org/DisTube.html#event:finish">finish</a></td>
 <td>There is no more music in the queue</td>
-</tr>
-<tr>
-<td><a href="https://distube.js.org/DisTube.html#event:stop">stop</a></td>
-<td>The queue is stopped by stop() method</td>
 </tr>
 <tr>
 <td><a href="https://distube.js.org/DisTube.html#event:noRelated">noRelated</a></td>
@@ -198,8 +196,10 @@ client.on(&quot;message&quot;, async (message) => {
     if ([&quot;repeat&quot;, &quot;loop&quot;].includes(command))
         distube.setRepeatMode(message, parseInt(args[0]));
 
-    if (command == &quot;stop&quot;)
+    if (command == &quot;stop&quot;) {
         distube.stop(message);
+        message.channel.send(&quot;Stopped the music!&quot;);
+    }
 
     if (command == &quot;queue&quot;) {
         let queue = distube.getQueue(message);
@@ -207,10 +207,15 @@ client.on(&quot;message&quot;, async (message) => {
             `**${id + 1}**. ${song.name} - \`${song.formattedDuration}\``
         ).join(&quot;\n&quot;));
     }
+
+    if ([`3d`, `bassboost`, `echo`, `karaoke`, `nightcore`, `vaporwave`].includes(command)) {
+        let filter = distube.setFilter(message, command);
+        message.channel.send(&quot;Current queue filter: &quot; + (filter || &quot;Off&quot;));
+    }
 });
 
 // Queue status template
-const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? &quot;All Queue&quot; : &quot;This Song&quot; : &quot;Off&quot;}\` | Autoplay: \`${queue.autoplay ? &quot;On&quot; : &quot;Off&quot;}\``;
+const status = (queue) => `Volume: \`${queue.volume}%\` | Filter: \`${queue.filter || &quot;Off&quot;}\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? &quot;All Queue&quot; : &quot;This Song&quot; : &quot;Off&quot;}\` | Autoplay: \`${queue.autoplay ? &quot;On&quot; : &quot;Off&quot;}\``;
 
 // DisTube event listeners, more in the documentation page
 distube
@@ -257,7 +262,7 @@ client.login(config.token);
 <script>prettyPrint();</script>
 <script src="scripts/linenumber.js"></script>
 <script>
-var list = [{"title":"DisTube","link":"<a href=\"DisTube.html\">DisTube</a>"},{"title":"DisTube#getQueue","link":"<a href=\"DisTube.html#getQueue\">DisTube &rtrif; getQueue</a>"},{"title":"DisTube#isPaused","link":"<a href=\"DisTube.html#isPaused\">DisTube &rtrif; isPaused</a>"},{"title":"DisTube#isPlaying","link":"<a href=\"DisTube.html#isPlaying\">DisTube &rtrif; isPlaying</a>"},{"title":"DisTube#jump","link":"<a href=\"DisTube.html#jump\">DisTube &rtrif; jump</a>"},{"title":"DisTube#pause","link":"<a href=\"DisTube.html#pause\">DisTube &rtrif; pause</a>"},{"title":"DisTube#play","link":"<a href=\"DisTube.html#play\">DisTube &rtrif; play</a>"},{"title":"DisTube#resume","link":"<a href=\"DisTube.html#resume\">DisTube &rtrif; resume</a>"},{"title":"DisTube#runAutoplay","link":"<a href=\"DisTube.html#runAutoplay\">DisTube &rtrif; runAutoplay</a>"},{"title":"DisTube#setRepeatMode","link":"<a href=\"DisTube.html#setRepeatMode\">DisTube &rtrif; setRepeatMode</a>"},{"title":"DisTube#setVolume","link":"<a href=\"DisTube.html#setVolume\">DisTube &rtrif; setVolume</a>"},{"title":"DisTube#shuffle","link":"<a href=\"DisTube.html#shuffle\">DisTube &rtrif; shuffle</a>"},{"title":"DisTube#skip","link":"<a href=\"DisTube.html#skip\">DisTube &rtrif; skip</a>"},{"title":"DisTube#stop","link":"<a href=\"DisTube.html#stop\">DisTube &rtrif; stop</a>"},{"title":"DisTube#toggleAutoplay","link":"<a href=\"DisTube.html#toggleAutoplay\">DisTube &rtrif; toggleAutoplay</a>"},{"title":"Queue","link":"<a href=\"Queue.html\">Queue</a>"},{"title":"Song","link":"<a href=\"Song.html\">Song</a>"},{"title":"addList","link":"<a href=\"DisTube.html#event:addList\">addList</a>"},{"title":"addSong","link":"<a href=\"DisTube.html#event:addSong\">addSong</a>"},{"title":"empty","link":"<a href=\"DisTube.html#event:empty\">empty</a>"},{"title":"error","link":"<a href=\"DisTube.html#event:error\">error</a>"},{"title":"finish","link":"<a href=\"DisTube.html#event:finish\">finish</a>"},{"title":"noRelated","link":"<a href=\"DisTube.html#event:noRelated\">noRelated</a>"},{"title":"playList","link":"<a href=\"DisTube.html#event:playList\">playList</a>"},{"title":"playSong","link":"<a href=\"DisTube.html#event:playSong\">playSong</a>"},{"title":"searchCancel","link":"<a href=\"DisTube.html#event:searchCancel\">searchCancel</a>"},{"title":"searchResult","link":"<a href=\"DisTube.html#event:searchResult\">searchResult</a>"},{"title":"stop","link":"<a href=\"DisTube.html#event:stop\">stop</a>"}];
+var list = [{"title":"DisTube","link":"<a href=\"DisTube.html\">DisTube</a>"},{"title":"DisTube#getQueue","link":"<a href=\"DisTube.html#getQueue\">DisTube &rtrif; getQueue</a>"},{"title":"DisTube#isPaused","link":"<a href=\"DisTube.html#isPaused\">DisTube &rtrif; isPaused</a>"},{"title":"DisTube#isPlaying","link":"<a href=\"DisTube.html#isPlaying\">DisTube &rtrif; isPlaying</a>"},{"title":"DisTube#jump","link":"<a href=\"DisTube.html#jump\">DisTube &rtrif; jump</a>"},{"title":"DisTube#pause","link":"<a href=\"DisTube.html#pause\">DisTube &rtrif; pause</a>"},{"title":"DisTube#play","link":"<a href=\"DisTube.html#play\">DisTube &rtrif; play</a>"},{"title":"DisTube#playSkip","link":"<a href=\"DisTube.html#playSkip\">DisTube &rtrif; playSkip</a>"},{"title":"DisTube#resume","link":"<a href=\"DisTube.html#resume\">DisTube &rtrif; resume</a>"},{"title":"DisTube#runAutoplay","link":"<a href=\"DisTube.html#runAutoplay\">DisTube &rtrif; runAutoplay</a>"},{"title":"DisTube#search","link":"<a href=\"DisTube.html#search\">DisTube &rtrif; search</a>"},{"title":"DisTube#setFilter","link":"<a href=\"DisTube.html#setFilter\">DisTube &rtrif; setFilter</a>"},{"title":"DisTube#setRepeatMode","link":"<a href=\"DisTube.html#setRepeatMode\">DisTube &rtrif; setRepeatMode</a>"},{"title":"DisTube#setVolume","link":"<a href=\"DisTube.html#setVolume\">DisTube &rtrif; setVolume</a>"},{"title":"DisTube#shuffle","link":"<a href=\"DisTube.html#shuffle\">DisTube &rtrif; shuffle</a>"},{"title":"DisTube#skip","link":"<a href=\"DisTube.html#skip\">DisTube &rtrif; skip</a>"},{"title":"DisTube#stop","link":"<a href=\"DisTube.html#stop\">DisTube &rtrif; stop</a>"},{"title":"DisTube#toggleAutoplay","link":"<a href=\"DisTube.html#toggleAutoplay\">DisTube &rtrif; toggleAutoplay</a>"},{"title":"Queue","link":"<a href=\"Queue.html\">Queue</a>"},{"title":"Song","link":"<a href=\"Song.html\">Song</a>"},{"title":"addList","link":"<a href=\"DisTube.html#event:addList\">addList</a>"},{"title":"addSong","link":"<a href=\"DisTube.html#event:addSong\">addSong</a>"},{"title":"empty","link":"<a href=\"DisTube.html#event:empty\">empty</a>"},{"title":"error","link":"<a href=\"DisTube.html#event:error\">error</a>"},{"title":"finish","link":"<a href=\"DisTube.html#event:finish\">finish</a>"},{"title":"noRelated","link":"<a href=\"DisTube.html#event:noRelated\">noRelated</a>"},{"title":"playList","link":"<a href=\"DisTube.html#event:playList\">playList</a>"},{"title":"playSong","link":"<a href=\"DisTube.html#event:playSong\">playSong</a>"},{"title":"searchCancel","link":"<a href=\"DisTube.html#event:searchCancel\">searchCancel</a>"},{"title":"searchResult","link":"<a href=\"DisTube.html#event:searchResult\">searchResult</a>"}];
 setupSearch(list)
 </script>
 
