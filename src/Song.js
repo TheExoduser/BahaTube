@@ -3,7 +3,7 @@
 const duration = require("./duration"),
   Discord = require("discord.js"),
   ytdl = require("ytdl-core"),
-  DisTube = require("./DisTube");
+  DisTube = require("./BahaTube");
 
 /** Class representing a song. */
 class Song {
@@ -53,6 +53,12 @@ class Song {
      * @type {ytdl.relatedVideo[]}
      */
     this.related = video.related_videos;
+
+    /**
+     * Possibility to set the time when the song started
+     * @type {null}
+     */
+    this.start_time = null;
   }
 }
 
