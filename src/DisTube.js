@@ -277,13 +277,16 @@ class DisTube extends EventEmitter {
     let playlist = null
     if (typeof arg2 == "string") {
       playlist = await ytpl(arg2);
-      playlist.items = playlist.items.map(vid => {
-        return {
-          ...vid,
-          formattedDuration: vid.duration,
-          duration: toSecond(vid.duration)
-        }
-      });
+      playlist.items = playlist.items.filter(vid => {
+        return vid.duration != null;
+      }).map(vid => {
+          return {
+            ...vid,
+            formattedDuration: vid.duration,
+            duration: toSecond(vid.duration)
+          }
+        });
+
       playlist.user = message.author;
       playlist.duration = playlist.items.reduce((prev, next) => prev + next.duration, 0);
       playlist.formattedDuration = formatDuration(playlist.duration * 1000);
