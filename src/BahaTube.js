@@ -204,6 +204,12 @@ class BahaTube extends EventEmitter {
         }
     }
 
+    /**
+     * Get current formatted playtime of a song
+     * @param {Discord.Message} message The message from guild channel
+     * @param {(string|Song)} song Youtube url | Search string | {@link BahaTube#Song}
+     * @returns {string|null}
+     */
     getPlayTime(message, song) {
       if (!song) return null;
       return formatDuration((moment().unix() - song.start_time) * 1000);
