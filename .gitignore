@@ -107,11 +107,11 @@ docs
 typings/BahaTube.js
 
 # Github
-/.github/
+.github/
 
 # IntelliJ
-/.idea/
+.idea/
 
 # Syncthing
 .stignore
-/.st*/
+.st*/
