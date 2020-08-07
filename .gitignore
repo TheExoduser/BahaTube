@@ -104,4 +104,14 @@ package-lock.json
 docs
 
 .vscode
-typings/DisTube.js
+typings/BahaTube.js
+
+# Github
+.github/
+
+# IntelliJ
+.idea/
+
+# Syncthing
+.stignore
+.st*/
