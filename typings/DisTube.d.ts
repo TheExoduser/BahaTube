@@ -58,6 +58,13 @@ declare class DisTube extends EventEmitter {
      */
     play(message: Discord.Message, song: (string | Song)): Promise<void>;
     /**
+     * Get current formatted playtime of a song
+     * @param {Discord.Message} message The message from guild channel
+     * @param {(string|Song)} song Youtube url | Search string | {@link BahaTube#Song}
+     * @returns {string|null}
+     */
+    getPlayTime(message: Discord.Message, song: (string | Song)): String;
+    /**
      * `@2.0.0` Skip the playing song and play a song or a playlist
      * @async
      * @param {Discord.Message} message The message from guild channel

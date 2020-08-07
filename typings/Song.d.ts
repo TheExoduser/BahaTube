@@ -45,6 +45,11 @@ declare class Song {
      */
     thumbnail: string;
     /**
+     * Possibility to set the time when the song started
+     * @type {null}
+     */
+    start_time: number;
+    /**
      * Related videos (for autoplay mode)
      * @type {ytdl.relatedVideo[]}
      */
