@@ -293,16 +293,17 @@ class BahaTube extends EventEmitter {
     async _handlePlaylist(message, arg2, skip = false) {
         let playlist = null
         if (typeof arg2 == "string") {
-            playlist = await ytpl(arg2);
-            playlist.items = playlist.items.filter(vid => {
-                return vid.duration != null;
-            }).map(vid => {
-                return {
-                    ...vid,
-                    formattedDuration: vid.duration,
-                    duration: toSecond(vid.duration)
+            playlist = await ytpl(arg2, {limit: 0});
+            playlist.items = playlist.items.reduce((res, vid) => {
+                if (typeof vid.duration != "undefined" && vid.duration != null && vid.duration != "null") {
+                    res.push({
+                        ...vid,
+                        formattedDuration: vid.duration,
+                        duration: toSecond(vid.duration)
+                    });
                 }
-            });
+                return res;
+            }, []);
 
             playlist.user = message.author;
             playlist.duration = playlist.items.reduce((prev, next) => prev + next.duration, 0);
