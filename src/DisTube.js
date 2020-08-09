@@ -8,13 +8,11 @@ const ytdl = require("discord-ytdl-core"),
     Discord = require("discord.js"),
     moment = require("moment"),
     url = require("url"),
-    asy = require("async"),
     spotify = require("spotify-web-api-node"),
     YouTube = require("simple-youtube-api"),
     SoundCloud = require('soundcloud-downloader');
-    Parallel = require("async-parallel"),
-    duration = require("./duration"),
-    { Converter } = require("ffmpeg-stream");// eslint-disable-line
+Parallel = require("async-parallel"),
+    duration = require("./duration");// eslint-disable-line
 
 const toSecond = (string) => {
     let h = 0,
@@ -189,10 +187,10 @@ class Distube extends EventEmitter {
         spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
 
         spotifyApi.clientCredentialsGrant()
-            .then(function(data) {
+            .then(function (data) {
                 // Save the access token so that it's used in future calls
                 spotifyApi.setAccessToken(data.body['access_token']);
-            }, function(err) {
+            }, function (err) {
                 console.log('Something went wrong when retrieving an access token', err.message);
             });
     }
@@ -264,7 +262,8 @@ class Distube extends EventEmitter {
                 await this._handlePlaylist(message, song, false, "spotify_playlist", spot.id);
             } else if (spot !== false && spot.type === "album") {
                 await this._handlePlaylist(message, song, false, "spotify_album", spot.id);
-            } else if (spot !== false && spot.type === "track") {d
+            } else if (spot !== false && spot.type === "track") {
+                d
                 await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
             } else if (ytpl.validateURL(song)) {
                 await this._handlePlaylist(message, song, false, "yt");
@@ -283,26 +282,13 @@ class Distube extends EventEmitter {
      * @returns {string|null}
      */
     getPlayTime(message, song) {
-      if (!song) return null;
-      return formatDuration((moment().unix() - song.start_time) * 1000);
+        if (!song) return null;
+        return formatDuration((moment().unix() - song.start_time) * 1000);
     }
 
     /**
-     * Validate Spotify url
-     * @param {(string)} song Spotify url
-     * @returns {Promise<boolean>}
-     */
-    validateSpotifyUrl(song) {
-        if (typeof this.parseSpotifyUrl(song) != "object") {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     *
-     * @param song
+     * Parse spotify url
+     * @param song Spotify url
      * @returns {Promise<boolean|{id: string, type: string}>}
      */
     parseSpotifyUrl(song) {
@@ -337,21 +323,8 @@ class Distube extends EventEmitter {
     }
 
     /**
-     * Validate Spotify url
-     * @param {(string)} song Spotify url
-     * @returns {Promise<boolean>}
-     */
-    validateSoundcloudUrl(song) {
-        if (typeof this.parseSoundcloudUrl(song) != "object") {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     *
-     * @param song
+     * Parse soundcloud url
+     * @param song Link to soundcloud
      * @returns {Promise<boolean|{id: string, type: string}>}
      */
     async parseSoundcloudUrl(song) {
@@ -365,7 +338,8 @@ class Distube extends EventEmitter {
             try {
                 resSong = await SoundCloud.getInfo(song, DisTubeOptions.soundcloudClientId);
                 resPlaylist = await SoundCloud.getSetInfo(song, DisTubeOptions.soundcloudClientId);
-            } catch (e) {}
+            } catch (e) {
+            }
 
             if (resPlaylist != null) {
                 return {
@@ -491,7 +465,7 @@ class Distube extends EventEmitter {
                     playlist = {
                         id: erg.id,
                         url: erg.external_urls.spotify,
-                        title:erg.name,
+                        title: erg.name,
                         total_items: erg.tracks.total,
                         items: [],
                         user: message.author,
@@ -1006,7 +980,12 @@ class Distube extends EventEmitter {
         return queue.filter;
     }
 
-     isValidHttpUrl(string) {
+    /**
+     * Check if string is a valid url
+     * @param string Url
+     * @returns {boolean}
+     */
+    isValidHttpUrl(string) {
         let url;
 
         try {
@@ -1017,17 +996,6 @@ class Distube extends EventEmitter {
 
         return url.protocol === "http:" || url.protocol === "https:";
     }
-
-     validURL(str) {
-        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-        return !!pattern.test(str);
-    }
-
 
     _emitPlaySong(queue) {
         if (
@@ -1099,7 +1067,7 @@ class Distube extends EventEmitter {
                     this.emit("error", message, "DispatcherErrorWhenPlayingSong");
                     queue.removeFirstSong();
                     if (queue.songs.length > 0) {
-                        if (emit)  this.emit("playSong", message, queue, queue.songs[0]);
+                        if (emit) this.emit("playSong", message, queue, queue.songs[0]);
                         this._playSong(message);
                     }
                 });

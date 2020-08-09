@@ -1,9 +1,10 @@
 /// <reference types="node" />
 export = DisTube;
-import { EventEmitter } from "events";
+import {EventEmitter} from "events";
 import Discord from "discord.js";
 import Queue from "./Queue";
 import Song from "./Song";
+
 /**
  * Class representing a DisTube.
  * @extends EventEmitter
@@ -13,6 +14,7 @@ declare class DisTube extends EventEmitter {
      * `@2.2.4` DisTube's current version.
      */
     static get version(): string;
+
     /**
      * Create new DisTube.
      * @param {Discord.Client} client Discord.JS client
@@ -26,6 +28,7 @@ declare class DisTube extends EventEmitter {
      * // client.DisTube = distube // make it access easily
      */
     constructor(client: Discord.Client, otp?: DisTubeOptions);
+
     /**
      * Discord.JS client
      * @type {Discord.Client}
@@ -41,6 +44,7 @@ declare class DisTube extends EventEmitter {
      * @type {DisTubeOptions}
      */
     options: DisTubeOptions;
+
     /**
      * Play / add a song from Youtube video url or playlist from Youtube playlist url. Search and play a song if it is not a valid url.
      * @async
@@ -57,13 +61,29 @@ declare class DisTube extends EventEmitter {
      * });
      */
     play(message: Discord.Message, song: (string | Song)): Promise<void>;
+
     /**
      * Get current formatted playtime of a song
      * @param {Discord.Message} message The message from guild channel
-     * @param {(string|Song)} song Youtube url | Search string | {@link BahaTube#Song}
+     * @param {(string|Song)} song Youtube url | Search string | {@link Distube#Song}
      * @returns {string|null}
      */
     getPlayTime(message: Discord.Message, song: (string | Song)): String;
+
+    /**
+     * Parse spotify url
+     * @param song Spotify url
+     * @returns {Promise<boolean|{id: string, type: string}>}
+     */
+    parseSpotifyUrl(song: String): Promise<boolean|{id: string, type: string}>;
+
+    /**
+     * Parse soundcloud url
+     * @param song Link to soundcloud
+     * @returns {Promise<boolean|{id: string, type: string, res: object}>}
+     */
+    async parseSoundcloudUrl(song: String): Promise<boolean|{id: string, type: string, res: object}>;
+
     /**
      * `@2.0.0` Skip the playing song and play a song or a playlist
      * @async
@@ -80,6 +100,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     playSkip(message: Discord.Message, song: (string | Song)): Promise<void>;
+
     /**
      * `@2.1.0` Play or add array of Youtube video urls.
      * `DisTube#event:playList` and `DisTube#event:addList` will be emitted
@@ -96,6 +117,7 @@ declare class DisTube extends EventEmitter {
      *     distube.playCustomPlaylist(message, songs, { title: "My playlist name" });
      */
     playCustomPlaylist(message: Discord.Message, urls: string[], properties?: object, playSkip?: boolean): Promise<void>;
+
     /**
      * PLay / add a playlist
      * @async
@@ -105,6 +127,7 @@ declare class DisTube extends EventEmitter {
      * @param {(string|object)} arg2 Youtube playlist url
      */
     private _handlePlaylist;
+
     /**
      * `@2.0.0` Search for a song. You can customize how user answers instead of send a number
      * (default of `DisTube#play()` search when `searchSongs` is `true`).
@@ -116,6 +139,7 @@ declare class DisTube extends EventEmitter {
      * @returns {Promise<Song[]>} Array of results
      */
     search(string: string): Promise<Song[]>;
+
     /**
      * Search for a song, fire `DisTube#event:error` if not found.
      * @async
@@ -145,6 +169,7 @@ declare class DisTube extends EventEmitter {
      * @param {Discord.Message} message The message from guild channel
      */
     private _deleteQueue;
+
     /**
      * Get the guild queue
      * @param {Discord.Message} message The message from guild channel
@@ -163,6 +188,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     getQueue(message: Discord.Message): Queue;
+
     /**
      * Add a video to queue
      * @private
@@ -182,6 +208,7 @@ declare class DisTube extends EventEmitter {
      * @returns {Queue}
      */
     private _addVideosToQueue;
+
     /**
      * Pause the guild stream
      * @param {Discord.Message} message The message from guild channel
@@ -189,6 +216,7 @@ declare class DisTube extends EventEmitter {
      * @throws {NotPlaying} No playing queue
      */
     pause(message: Discord.Message): Queue;
+
     /**
      * Resume the guild stream
      * @param {Discord.Message} message The message from guild channel
@@ -196,6 +224,7 @@ declare class DisTube extends EventEmitter {
      * @throws {NotPlaying} No playing queue
      */
     resume(message: Discord.Message): Queue;
+
     /**
      * Stop the guild stream
      * @param {Discord.Message} message The message from guild channel
@@ -212,6 +241,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     stop(message: Discord.Message): void;
+
     /**
      * Set the guild stream's volume
      * @param {Discord.Message} message The message from guild channel
@@ -228,6 +258,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     setVolume(message: Discord.Message, percent: number): Queue;
+
     /**
      * Skip the playing song
      *
@@ -245,6 +276,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     skip(message: Discord.Message): Queue;
+
     /**
      * Shuffle the guild queue songs
      * @param {Discord.Message} message The message from guild channel
@@ -259,6 +291,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     shuffle(message: Discord.Message): Queue;
+
     /**
      * Jump to the song number in the queue.
      * The next one is 1,...
@@ -277,6 +310,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     jump(message: Discord.Message, num: number): Queue;
+
     /**
      * Set the repeat mode of the guild queue.
      * Turn off if repeat mode is the same value as new mode.
@@ -299,6 +333,7 @@ declare class DisTube extends EventEmitter {
      * });
      */
     setRepeatMode(message: Discord.Message, mode?: number): number;
+
     /**
      * Toggle autoplay mode
      * @param {Discord.Message} message The message from guild channel
@@ -316,18 +351,21 @@ declare class DisTube extends EventEmitter {
      * });
      */
     toggleAutoplay(message: Discord.Message): boolean;
+
     /**
      * Whether or not a guild is playing or paused music.
      * @param {Discord.Message} message The message from guild channel to check
      * @returns {boolean} Whether or not the guild is playing song(s)
      */
     isPlaying(message: Discord.Message): boolean;
+
     /**
      * Whether or not the guild queue is paused
      * @param {Discord.Message} message The message from guild channel to check
      * @returns {boolean} Whether or not the guild queue is paused
      */
     isPaused(message: Discord.Message): boolean;
+
     /**
      * Whether or not the queue's voice channel is empty
      * @private
@@ -336,6 +374,7 @@ declare class DisTube extends EventEmitter {
      * @returns {boolean} No user in voice channel return `true`
      */
     private _isVoiceChannelEmpty;
+
     /**
      * Add related song to the queue
      * @async
@@ -343,6 +382,7 @@ declare class DisTube extends EventEmitter {
      * @returns {Promise<Queue>} The guild queue
      */
     runAutoplay(message: Discord.Message): Promise<Queue>;
+
     /**
      * `@2.0.0` Enable or disable a filter of the queue, replay the playing song.
      * Available filters: `3d`, `bassboost`, `echo`, `karaoke`, `nightcore`, `vaporwave`
@@ -362,6 +402,14 @@ declare class DisTube extends EventEmitter {
      * });
      */
     setFilter(message: Discord.Message, filter: string): string;
+
+    /**
+     * Check if string is a valid url
+     * @param string Url
+     * @returns {boolean}
+     */
+    isValidHttpUrl(string: String): boolean;
+
     /**
      * Play a song on voice connection
      * @private
@@ -369,6 +417,7 @@ declare class DisTube extends EventEmitter {
      * @param {Discord.Message} message The message from guild channel
      */
     private _playSong;
+
     /**
      *  Emitted after DisTube add playlist to guild queue
      *
@@ -379,7 +428,7 @@ declare class DisTube extends EventEmitter {
      * @since 1.1.0
      * @example
      * const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;
-     * 
+     *
      * distube.on("addList", (message, queue, playlist) => message.channel.send(
      *     `Added \`${playlist.title}\` playlist (${playlist.total_items} songs) to queue\n${status(queue)}`
      * ));
@@ -394,7 +443,7 @@ declare class DisTube extends EventEmitter {
      * @param {Song} song Added song
      * @example
      * const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;
-     * 
+     *
      * distube.on("addSong", (message, queue, song) => message.channel.send(
      *     `Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`
      * ));
@@ -438,7 +487,7 @@ declare class DisTube extends EventEmitter {
      * @param {Song} song Playing song
      * @example
      * const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;
-     * 
+     *
      * distube.on("playList", (message, queue, playlist, song) => message.channel.send(
      *     `Play \`${playlist.title}\` playlist (${playlist.total_items} songs).\nRequested by: ${song.user}\nNow playing \`${song.name}\` - \`${song.formattedDuration}\`\n${status(queue)}`
      * ));
@@ -455,7 +504,7 @@ declare class DisTube extends EventEmitter {
      * @param {Song} song Playing song
      * @example
      * const status = (queue) => `Volume: \`${queue.volume}%\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "Server Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;
-     * 
+     *
      * distube.on("playSong", (message, queue, song) => message.channel.send(
      *     `Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${song.user}\n${status(queue)}`
      * ));
@@ -479,8 +528,9 @@ declare class DisTube extends EventEmitter {
      */
     on(event: "searchResult", listener: (message: Discord.Message, result: Song[]) => void): this;
 }
+
 declare namespace DisTube {
-    export { DisTubeOptions, ytpl_author, ytpl_item, ytpl_result };
+    export {DisTubeOptions, ytpl_author, ytpl_item, ytpl_result};
 }
 declare namespace DisTubeOptions {
     export const emitNewSongOnly: boolean;
