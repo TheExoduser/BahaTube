@@ -104,7 +104,7 @@ package-lock.json
 docs
 
 .vscode
-typings/BahaTube.js
+typings/Distube.js
 
 # Github
 .github/

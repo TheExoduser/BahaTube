@@ -1,6 +1,6 @@
 {
     "files": [
-	  "src/BahaTube.js"
+	  "src/Distube.js"
 	],
     "exclude": [
         "node_modules"

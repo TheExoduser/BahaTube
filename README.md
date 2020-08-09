@@ -1,4 +1,4 @@
-# BahaTube - *a fork of [DisTube](https://github.com/skick1234/DisTube)*
+# Distube - *a fork of [DisTube](https://github.com/skick1234/DisTube)*
 
 A Node.js module to easily manage music commands and play Youtube song on Discord without any API key.
 
@@ -22,62 +22,62 @@ Require [discord.js](https://discord.js.org) v12 and [FFMPEG](https://www.ffmpeg
 
 ## Documentation
 
-### BahaTube
-- [play(`message, string`)](https://distube.js.org/BahaTube.html#play): play / add video(s) from video url or playlist url. Search for a video if `string` is invalid url.
+### Distube
+- [play(`message, string`)](https://distube.js.org/Distube.html#play): play / add video(s) from video url or playlist url. Search for a video if `string` is invalid url.
 
 ##### Song management
-- [playSkip(`message, string`)](https://distube.js.org/BahaTube.html#play): same as [play()](https://distube.js.org/BahaTube.html#play) but it will add new song(s) to the beginning of the queue and skip the playing song.
-- [playCustomPlaylist(`message, urls`)](https://distube.js.org/BahaTube.html#playCustomPlaylist): Play or add to the queue a list of Youtube video url.
-- [stop(`message`)](https://distube.js.org/BahaTube.html#stop): Stop the playing song and clear the queue.
-- [skip(`message`)](https://distube.js.org/BahaTube.html#skip): Skip the current song.
-- [jump(`message, num`)](https://distube.js.org/BahaTube.html#jump): Jump to the song number in the queue.
-- [pause(`message`)](https://distube.js.org/BahaTube.html#pause): Pause the playing song.
-- [resume(`message`)](https://distube.js.org/BahaTube.html#resume): Resume the paused song.
+- [playSkip(`message, string`)](https://distube.js.org/Distube.html#play): same as [play()](https://distube.js.org/Distube.html#play) but it will add new song(s) to the beginning of the queue and skip the playing song.
+- [playCustomPlaylist(`message, urls`)](https://distube.js.org/Distube.html#playCustomPlaylist): Play or add to the queue a list of Youtube video url.
+- [stop(`message`)](https://distube.js.org/Distube.html#stop): Stop the playing song and clear the queue.
+- [skip(`message`)](https://distube.js.org/Distube.html#skip): Skip the current song.
+- [jump(`message, num`)](https://distube.js.org/Distube.html#jump): Jump to the song number in the queue.
+- [pause(`message`)](https://distube.js.org/Distube.html#pause): Pause the playing song.
+- [resume(`message`)](https://distube.js.org/Distube.html#resume): Resume the paused song.
 
 ##### Queue management
-- [setFilter(`message`, `filter`)](https://distube.js.org/BahaTube.html#setFilter) Toggle a filter of the queue, replay playing song. Available filters: `3d`, `bassboost`, `echo`, `karaoke`, `nightcore`, `vaporwave`
-- [shuffle(`message`)](https://distube.js.org/BahaTube.html#shuffle): Shuffle the server queue.
-- [setVolume(`message, percent`)](https://distube.js.org/BahaTube.html#setVolume): Set server volume in percentage.
-- [setRepeatMode(`message, type`)](https://distube.js.org/BahaTube.html#setRepeatMode): Set repeat mode of server `(disabled, repeat a song, repeat all the queue)`.
-- [toggleAutoplay(`message`)](https://distube.js.org/BahaTube.html#toggleAutoplay): Toggle server's auto-play mode.
-- [getQueue(`message`)](https://distube.js.org/BahaTube.html#getQueue): get the server queue.
-- [isPaused(`message`)](https://distube.js.org/BahaTube.html#isPaused): Whether or not the server queue is paused.
-- [isPlaying(`message`)](https://distube.js.org/BahaTube.html#isPlaying): Whether or not the bot is playing music in the server.
+- [setFilter(`message`, `filter`)](https://distube.js.org/Distube.html#setFilter) Toggle a filter of the queue, replay playing song. Available filters: `3d`, `bassboost`, `echo`, `karaoke`, `nightcore`, `vaporwave`
+- [shuffle(`message`)](https://distube.js.org/Distube.html#shuffle): Shuffle the server queue.
+- [setVolume(`message, percent`)](https://distube.js.org/Distube.html#setVolume): Set server volume in percentage.
+- [setRepeatMode(`message, type`)](https://distube.js.org/Distube.html#setRepeatMode): Set repeat mode of server `(disabled, repeat a song, repeat all the queue)`.
+- [toggleAutoplay(`message`)](https://distube.js.org/Distube.html#toggleAutoplay): Toggle server's auto-play mode.
+- [getQueue(`message`)](https://distube.js.org/Distube.html#getQueue): get the server queue.
+- [isPaused(`message`)](https://distube.js.org/Distube.html#isPaused): Whether or not the server queue is paused.
+- [isPlaying(`message`)](https://distube.js.org/Distube.html#isPlaying): Whether or not the bot is playing music in the server.
 
 ##### Events
 
 | Event Name                                                             | Emitted When                                        |
 |------------------------------------------------------------------------|-----------------------------------------------------|
-| [playSong](https://distube.js.org/BahaTube.html#event:playSong)         | Play a new song                                     |
-| [playList](https://distube.js.org/BahaTube.html#event:playList)         | Play a new playlist                                 |
-| [addSong](https://distube.js.org/BahaTube.html#event:addSong)           | Add new song to server queue                        |
-| [addList](https://distube.js.org/BahaTube.html#event:addList)           | Add playlist to server queue                        |
-| [empty](https://distube.js.org/BahaTube.html#event:empty)               | There is no user in VoiceChannel                    |
-| [finish](https://distube.js.org/BahaTube.html#event:finish)             | There is no more music in the queue                 |
-| [noRelated](https://distube.js.org/BahaTube.html#event:noRelated)       | BahaTube cannot find related songs to play           |
-| [searchResult](https://distube.js.org/BahaTube.html#event:searchResult) | Return results after searching (searchSongs = true) |
-| [searchCancel](https://distube.js.org/BahaTube.html#event:searchCancel) | Cancel selecting results (searchSongs = true)       |
-| [error](https://distube.js.org/BahaTube.html#event:error)               | An error encountered                                |
+| [playSong](https://distube.js.org/Distube.html#event:playSong)         | Play a new song                                     |
+| [playList](https://distube.js.org/Distube.html#event:playList)         | Play a new playlist                                 |
+| [addSong](https://distube.js.org/Distube.html#event:addSong)           | Add new song to server queue                        |
+| [addList](https://distube.js.org/Distube.html#event:addList)           | Add playlist to server queue                        |
+| [empty](https://distube.js.org/Distube.html#event:empty)               | There is no user in VoiceChannel                    |
+| [finish](https://distube.js.org/Distube.html#event:finish)             | There is no more music in the queue                 |
+| [noRelated](https://distube.js.org/Distube.html#event:noRelated)       | Distube cannot find related songs to play           |
+| [searchResult](https://distube.js.org/Distube.html#event:searchResult) | Return results after searching (searchSongs = true) |
+| [searchCancel](https://distube.js.org/Distube.html#event:searchCancel) | Cancel selecting results (searchSongs = true)       |
+| [error](https://distube.js.org/Distube.html#event:error)               | An error encountered                                |
 
 See more definitions, properties and events details in the [Documentation page](https://distube.js.org/).
 
 ## Example Bot
 
-- [BahaTube-Bot](https://skick.xyz/BahaTube) - A music bot with reaction controller, filters, DJ mode, user's custom playlist and voting.
-- [BahaTube-Example](https://github.com/skick1234/BahaTube-Example) - Example bot with simple command handler.
+- [Distube-Bot](https://skick.xyz/Distube) - A music bot with reaction controller, filters, DJ mode, user's custom playlist and voting.
+- [Distube-Example](https://github.com/skick1234/Distube-Example) - Example bot with simple command handler.
 
 ```javascript
-// BahaTube example bot, definitions, properties and events details in the Documentation page.
+// Distube example bot, definitions, properties and events details in the Documentation page.
 const Discord = require('discord.js'),
-    BahaTube = require('distube'),
+    Distube = require('distube'),
     client = new Discord.Client(),
     config = {
         prefix: ".",
         token: process.env.TOKEN || "Your Discord Token"
     };
 
-// Create a new BahaTube
-const distube = new BahaTube(client, { searchSongs: true, emitNewSongOnly: true, highWaterMark: 1 << 25 });
+// Create a new Distube
+const distube = new Distube(client, { searchSongs: true, emitNewSongOnly: true, highWaterMark: 1 << 25 });
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -116,7 +116,7 @@ client.on("message", async (message) => {
 // Queue status template
 const status = (queue) => `Volume: \`${queue.volume}%\` | Filter: \`${queue.filter || "Off"}\` | Loop: \`${queue.repeatMode ? queue.repeatMode == 2 ? "All Queue" : "This Song" : "Off"}\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;
 
-// BahaTube event listeners, more in the documentation page
+// Distube event listeners, more in the documentation page
 distube
     .on("playSong", (message, queue, song) => message.channel.send(
         `Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${song.user}\n${status(queue)}`
