@@ -89,7 +89,7 @@ const ffmpegFilters = {
 const ffmpegFilters = {
     "3d": "apulsator=hz=0.125",
     '8D': 'apulsator=hz=0.08',
-    bassboost: 'bass=g=20,dynaudnorm=f=200',
+    bassboost: 'dynaudnorm=f=150:g=15,equalizer=f=40:width_type=h:width=50:g=10',
     echo: "aecho=0.8:0.9:1000:0.3",
     flanger: 'flanger',
     gate: 'agate',
