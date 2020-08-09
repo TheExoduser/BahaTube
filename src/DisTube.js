@@ -6,7 +6,12 @@ const ytdl = require("discord-ytdl-core"),
     Song = require("./Song"),
     formatDuration = require("./duration"),
     Discord = require("discord.js"),
-    moment = require("moment"); // eslint-disable-line
+    moment = require("moment"),
+    url = require("url"),
+    asy = require("async"),
+    spotify = require("spotify-web-api-node"),
+    YouTube = require("simple-youtube-api"),
+    Parallel = require("async-parallel"); // eslint-disable-line
 
 const toSecond = (string) => {
     let h = 0,
@@ -27,18 +32,18 @@ const toSecond = (string) => {
 };
 
 /**
- * BahaTube options.
- * @typedef {object} BahaTubeOptions
- * @prop {boolean} [emitNewSongOnly=false] `@1.3.0`. If `true`, {@link BahaTube#event:playSong} is not emitted when looping a song or next song is the same as the previous one
+ * Distube options.
+ * @typedef {object} DisTubeOptions
+ * @prop {boolean} [emitNewSongOnly=false] `@1.3.0`. If `true`, {@link Distube#event:playSong} is not emitted when looping a song or next song is the same as the previous one
  * @prop {number} [highWaterMark=1<<24] `@2.2.0` ytdl's highWaterMark option.
  * @prop {boolean} [leaveOnEmpty=true] Whether or not leaving voice channel if channel is empty when finish the current song. (Avoid accident leaving)
  * @prop {boolean} [leaveOnFinish=false] Whether or not leaving voice channel when the queue ends.
- * @prop {boolean} [leaveOnStop=true] Whether or not leaving voice channel after using BahaTube.stop() function.
- * @prop {boolean} [searchSongs=false] Whether or not searching for multiple songs to select manually, BahaTube will play the first result if `false`
+ * @prop {boolean} [leaveOnStop=true] Whether or not leaving voice channel after using Distube.stop() function.
+ * @prop {boolean} [searchSongs=false] Whether or not searching for multiple songs to select manually, Distube will play the first result if `false`
  * @prop {string} [youtubeCookie=null] `@2.4.0` Youtube cookie to prevent rate limit (Error 429). You must fill `youtubeIdentityToken` if you use this. You can get your YouTube cookie by navigating to YouTube in a web browser, opening up dev tools, and typing "document.cookie" in the console
  * @prop {string} [youtubeIdentityToken=null] `@2.4.0`
  */
-const BahaTubeOptions = {
+const DisTubeOptions = {
     highWaterMark: 1 << 24,
     emitNewSongOnly: false,
     leaveOnEmpty: true,
@@ -46,11 +51,13 @@ const BahaTubeOptions = {
     leaveOnStop: true,
     searchSongs: false,
     youtubeCookie: null,
-    youtubeIdentityToken: null
+    youtubeIdentityToken: null,
+    spotifyClientId: null,
+    spotifyClientSecret: null
 };
 
 /**
- * BahaTube audio filters.
+ * Distube audio filters.
  * @typedef {string} Filter
  * @prop {string} 3d `@2.0.0`
  * @prop {string} bassboost `@2.0.0`
@@ -63,6 +70,7 @@ const BahaTubeOptions = {
  * @prop {string} reverse `@2.4.0`
  * @prop {string} vaporwave `@2.0.0`
  */
+/*
 const ffmpegFilters = {
     "3d": "apulsator=hz=0.125",
     bassboost: 'dynaudnorm=f=150:g=15,equalizer=f=40:width_type=h:width=50:g=10',
@@ -75,14 +83,40 @@ const ffmpegFilters = {
     reverse: 'areverse',
     vaporwave: "asetrate=48000*0.8,aresample=48000,atempo=1.1",
 }
+*/
+const ffmpegFilters = {
+    "3d": "apulsator=hz=0.125",
+    '8D': 'apulsator=hz=0.08',
+    bassboost: 'bass=g=20,dynaudnorm=f=200',
+    echo: "aecho=0.8:0.9:1000:0.3",
+    flanger: 'flanger',
+    gate: 'agate',
+    haas: 'haas',
+    karaoke: 'stereotools=mlev=0.03',
+    mcompand: 'mcompand',
+    nightcore: 'aresample=48000,asetrate=48000*1.25',
+    normalizer: 'dynaudnorm=f=200',
+    phaser: 'aphaser=in_gain=0.4',
+    pulsator: 'apulsator=hz=1',
+    reverse: 'areverse',
+    subboost: 'asubboost',
+    surrounding: 'surround',
+    treble: 'treble=g=5',
+    tremolo: 'tremolo',
+    vaporwave: 'aresample=48000,asetrate=48000*0.8',
+    vibrato: 'vibrato=f=6.5',
+}
+
+const spotifyApi = new spotify();
+let youtube = null;
 
 /**
- * Class representing a BahaTube.
+ * Class representing a Distube.
  * @extends EventEmitter
  */
-class BahaTube extends EventEmitter {
+class Distube extends EventEmitter {
     /**
-     * `@2.2.4` BahaTube's current version.
+     * `@2.2.4` Distube's current version.
      * @type {string}
      * @readonly
      */
@@ -91,16 +125,16 @@ class BahaTube extends EventEmitter {
     }
 
     /**
-     * Create new BahaTube.
+     * Create new Distube.
      * @param {Discord.Client} client Discord.JS client
-     * @param {BahaTubeOptions} [otp={}] Custom BahaTube options
+     * @param {DisTubeOptions} [otp={}] Custom Distube options
      * @example
      * const Discord = require('discord.js'),
-     *     BahaTube = require('distube'),
+     *     Distube = require('distube'),
      *     client = new Discord.Client(),
-     * // Create a new BahaTube
-     * const distube = new BahaTube(client, { searchSongs: true });
-     * // client.BahaTube = distube // make it access easily
+     * // Create a new Distube
+     * const distube = new Distube(client, { searchSongs: true });
+     * // client.Distube = distube // make it access easily
      */
     constructor(client, otp = {}) {
         super();
@@ -119,15 +153,15 @@ class BahaTube extends EventEmitter {
         this.guildQueues = new Discord.Collection();
 
         /**
-         * BahaTube options
-         * @type {BahaTubeOptions}
+         * Distube options
+         * @type {DisTubeOptions}
          */
-        this.options = BahaTubeOptions;
+        this.options = DisTubeOptions;
         for (let key in otp)
             this.options[key] = otp[key];
 
-        // this.requestOptions = this.options.youtubeIdentityToken ? { headers: { cookie: this.options.youtubeCookie, 'x-youtube-identity-token': this.options.youtubeIdentityToken } } : null;
-        this.requestOptions = null;
+        //this.requestOptions = this.options.youtubeIdentityToken ? { headers: { cookie: this.options.youtubeCookie, 'x-youtube-identity-token': this.options.youtubeIdentityToken } } : null;
+        //this.requestOptions = null;
 
         if (this.options.leaveOnEmpty) client.on("voiceStateUpdate", (oldState) => {
             if (!oldState || !oldState.channel) return;
@@ -143,30 +177,46 @@ class BahaTube extends EventEmitter {
                 }, 60000, queue)
             }
         })
+
+        youtube = new YouTube(DisTubeOptions.youtubeIdentityToken);
+
+        spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
+        spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
+
+        spotifyApi.clientCredentialsGrant()
+            .then(function(data) {
+                // Save the access token so that it's used in future calls
+                spotifyApi.setAccessToken(data.body['access_token']);
+            }, function(err) {
+                console.log('Something went wrong when retrieving an access token', err.message);
+            });
     }
 
     /**
      * Resolve a Song
      * @async
      * @param {Discord.Message} message The message from guild channel
-     * @param {(string|Song)} song Youtube url | Search string | {@link BahaTube#Song}
+     * @param {(string|Song)} song Youtube url | Search string | {@link Distube#Song}
      * @private
      * @ignore
      * @returns {Promise<Song>} Resolved Song
      */
-    async _resolveSong(message, song) {
+    async _resolveSong(message, song, type = "yt") {
         if (typeof song === "object") {
             song.user = message.author;
             return song;
+        } else if (type === "spotify_track") {
+            let s = (await spotifyApi.getTrack(song)).body;
+            return await this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1);
         } else if (!ytdl.validateURL(song))
-            return await this._searchSong(message, song);
+            return await this._searchSong(message, song, true, 1);
         else {
             let info = await ytdl.getBasicInfo(song, {requestOptions: this.requestOptions});
             return new Song(info, message.author);
         }
     }
 
-    async _handleSong(message, song, skip = false) {
+    async _handleSong(message, song, skip = false, type = "yt") {
         if (!song) return;
         if (this.isPlaying(message)) {
             let queue = this._addToQueue(message, song, skip);
@@ -182,7 +232,7 @@ class BahaTube extends EventEmitter {
      * Play / add a song from Youtube video url or playlist from Youtube playlist url. Search and play a song if it is not a valid url.
      * @async
      * @param {Discord.Message} message The message from guild channel
-     * @param {(string|Song)} song Youtube url | Search string | {@link BahaTube#Song}
+     * @param {(string|Song)} song Youtube url | Search string | {@link Distube#Song}
      * @example
      * client.on('message', (message) => {
      *     if (!message.content.startsWith(config.prefix)) return;
@@ -195,10 +245,19 @@ class BahaTube extends EventEmitter {
     async play(message, song) {
         if (!song) return;
         try {
-            if (ytpl.validateURL(song))
-                await this._handlePlaylist(message, song);
-            else
+            let spot = this.parseSpotifyUrl(song);
+
+            if (spot !== false && spot.type === "playlist") {
+                await this._handlePlaylist(message, song, false, "spotify_playlist", spot.id);
+            } else if (spot !== false && spot.type === "album") {
+                await this._handlePlaylist(message, song, false, "spotify_album", spot.id);
+            } else if (spot !== false && spot.type === "track") {
+                await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
+            } else if (ytpl.validateURL(song)) {
+                await this._handlePlaylist(message, song, false, "yt");
+            } else {
                 await this._handleSong(message, await this._resolveSong(message, song));
+            }
         } catch (e) {
             this.emit("error", message, `play(${song}) encountered: ${e}`);
         }
@@ -207,7 +266,7 @@ class BahaTube extends EventEmitter {
     /**
      * Get current formatted playtime of a song
      * @param {Discord.Message} message The message from guild channel
-     * @param {(string|Song)} song Youtube url | Search string | {@link BahaTube#Song}
+     * @param {(string|Song)} song Youtube url | Search string | {@link Distube#Song}
      * @returns {string|null}
      */
     getPlayTime(message, song) {
@@ -216,10 +275,59 @@ class BahaTube extends EventEmitter {
     }
 
     /**
+     * Validate Spotify url
+     * @param {(string)} song Spotify url
+     * @returns {Promise<boolean>}
+     */
+    validateSpotifyUrl(song) {
+        if (typeof this.parseSpotifyUrl(song) != "object") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param song
+     * @returns {Promise<boolean|{id: string, type: string}>}
+     */
+    parseSpotifyUrl(song) {
+        if (typeof song !== "string") {
+            return false;
+        }
+
+        if (song.startsWith("spotify:")) {
+            let q = song.split(":");
+            if (q[1] === "track" || q[1] === "album" || q[1] === "playlist") {
+                return {
+                    type: q[1],
+                    id: q[2]
+                }
+            } else {
+                return false;
+            }
+        } else if (this.validURL(song)) {
+            let q = url.parse(song);
+            let qq = q.pathname.split("/").splice(1);
+            if ((q.hostname === "open.spotify.com") && (qq[0] === "track" || qq[0] === "album" || qq[0] === "playlist")) {
+                return {
+                    type: qq[0],
+                    id: qq[1]
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * `@2.0.0` Skip the playing song and play a song or a playlist
      * @async
      * @param {Discord.Message} message The message from guild channel
-     * @param {(string|Song)} song Youtube url | Search string | {@link BahaTube#Song}
+     * @param {(string|Song)} song Youtube url | Search string | {@link Distube#Song}
      * @throws {Error} If an error encountered
      * @example
      * client.on('message', (message) => {
@@ -233,10 +341,19 @@ class BahaTube extends EventEmitter {
     async playSkip(message, song) {
         if (!song) return;
         try {
-            if (ytpl.validateURL(song))
-                await this._handlePlaylist(message, song, true);
-            else
-                await this._handleSong(message, await this._resolveSong(message, song), true);
+            let spot = this.parseSpotifyUrl(song);
+
+            if (spot !== false && spot.type === "playlist") {
+                await this._handlePlaylist(message, song, true, "spotify_playlist", spot.id);
+            } else if (spot !== false && spot.type === "album") {
+                await this._handlePlaylist(message, song, true, "spotify_album", spot.id);
+            } else if (spot !== false && spot.type === "track") {
+                await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
+            } else if (ytpl.validateURL(song)) {
+                await this._handlePlaylist(message, song, true, "yt");
+            } else {
+                await this._handleSong(message, await this._resolveSong(message, song));
+            }
         } catch (e) {
             this.emit("error", message, `playSkip(${song}) encountered: ${e}`);
         }
@@ -244,7 +361,7 @@ class BahaTube extends EventEmitter {
 
     /**
      * `@2.1.0` Play or add array of Youtube video urls.
-     * {@link BahaTube#event:playList} or {@link BahaTube#event:addList} will be emitted
+     * {@link Distube#event:playList} or {@link Distube#event:addList} will be emitted
      * with `playlist`'s properties include `properties` parameter's properties,
      * `user`, `items`, `total_items`, `duration`, `formattedDuration`, `thumbnail` like {@link ytpl_result}
      * @async
@@ -290,25 +407,60 @@ class BahaTube extends EventEmitter {
      * @param {Discord.Message} message The message from guild channel
      * @param {(string|object)} arg2 Youtube playlist url
      */
-    async _handlePlaylist(message, arg2, skip = false) {
+    async _handlePlaylist(message, arg2, skip = false, source = "yt", spotify_id = null) {
         let playlist = null
         if (typeof arg2 == "string") {
-            playlist = await ytpl(arg2, {limit: 0});
-            playlist.items = playlist.items.reduce((res, vid) => {
-                if (typeof vid.duration != "undefined" && vid.duration != null && vid.duration != "null") {
-                    res.push({
-                        ...vid,
-                        formattedDuration: vid.duration,
-                        duration: toSecond(vid.duration)
-                    });
-                }
-                return res;
-            }, []);
+            if (spotify_id !== null) {
+                let erg = null;
 
-            playlist.user = message.author;
-            playlist.duration = playlist.items.reduce((prev, next) => prev + next.duration, 0);
-            playlist.formattedDuration = formatDuration(playlist.duration * 1000);
-            playlist.thumbnail = playlist.items[0].thumbnail;
+                if (source === "spotify_album") {
+                    erg = (await spotifyApi.getAlbum(spotify_id)).body;
+                } else if (source === "spotify_playlist") {
+                    erg = (await spotifyApi.getPlaylist(spotify_id)).body;
+                } else {
+                    throw Error("SpotifyInvalidUrl");
+                }
+
+                if (erg != null) {
+                    playlist = {
+                        id: erg.id,
+                        url: erg.external_urls.spotify,
+                        title:erg.name,
+                        total_items: erg.tracks.total,
+                        items: [],
+                        user: message.author,
+                    };
+
+                    await Parallel.each(erg.tracks.items, async elem => {
+                        let ergSong = await this._searchSong(message, `${(source === "spotify_album" ? elem.name : elem.track.name)} ${(source === "spotify_album" ? erg.artists[0].name : elem.track.artists[0].name)}`, false, 1);
+                        ergSong.title = ergSong.name;
+                        playlist.items.push(ergSong);
+                    });
+
+                    playlist.duration = playlist.items.reduce((prev, next) => prev + next.duration, 0);
+                    playlist.formattedDuration = formatDuration(playlist.duration * 1000);
+                    playlist.thumbnail = playlist.items[0].thumbnail;
+                } else {
+                    throw Error("SpotifyLinkNotFound");
+                }
+            } else {
+                playlist = await ytpl(arg2, {limit: 0});
+                playlist.items = playlist.items.reduce((res, vid) => {
+                    if (typeof vid.duration != "undefined" && vid.duration != null && vid.duration != "null") {
+                        res.push({
+                            ...vid,
+                            formattedDuration: vid.duration,
+                            duration: toSecond(vid.duration)
+                        });
+                    }
+                    return res;
+                }, []);
+
+                playlist.user = message.author;
+                playlist.duration = playlist.items.reduce((prev, next) => prev + next.duration, 0);
+                playlist.formattedDuration = formatDuration(playlist.duration * 1000);
+                playlist.thumbnail = playlist.items[0].thumbnail;
+            }
         } else if (typeof arg2 == "object")
             playlist = arg2;
         if (!playlist) throw Error("PlaylistNotFound");
@@ -327,8 +479,8 @@ class BahaTube extends EventEmitter {
 
     /**
      * `@2.0.0` Search for a song. You can customize how user answers instead of send a number
-     * (default of {@link BahaTube#play}() search when `searchSongs` is `true`).
-     * Then use {@link BahaTube#play}(message, aResultToPlay) or {@link BahaTube#playSkip}() to play it.
+     * (default of {@link Distube#play}() search when `searchSongs` is `true`).
+     * Then use {@link Distube#play}(message, aResultToPlay) or {@link Distube#playSkip}() to play it.
      * @async
      * @param {string} string The string search for
      * @throws {NotFound} If not found
@@ -346,7 +498,7 @@ class BahaTube extends EventEmitter {
     }
 
     /**
-     * Search for a song, fire {@link BahaTube#event:error} if not found.
+     * Search for a song, fire {@link Distube#event:error} if not found.
      * @async
      * @private
      * @ignore
@@ -355,14 +507,14 @@ class BahaTube extends EventEmitter {
      * @throws {Error}
      * @returns {Song} Song info
      */
-    async _searchSong(message, name) {
-        let search = await ytsr(name, {limit: 12});
+    async _searchSong(message, name, emit = true, limit = 12) {
+        let search = await ytsr(name, {limit: limit});
         let videos = search.items.filter(val => val.duration || val.type == 'video');
         if (videos.length === 0) throw "SearchNotFound";
         let song = videos[0];
         if (this.options.searchSongs) {
             try {
-                this.emit("searchResult", message, videos);
+                if (emit) this.emit("searchResult", message, videos);
                 let answers = await message.channel.awaitMessages(m => m.author.id === message.author.id, {
                     max: 1,
                     time: 60000,
@@ -371,12 +523,12 @@ class BahaTube extends EventEmitter {
                 if (!answers.first()) throw Error();
                 let index = parseInt(answers.first().content, 10);
                 if (isNaN(index) || index > videos.length || index < 1) {
-                    this.emit("searchCancel", message);
+                    if (emit) this.emit("searchCancel", message);
                     return;
                 }
                 song = videos[index - 1];
             } catch {
-                this.emit("searchCancel", message);
+                if (emit) this.emit("searchCancel", message);
                 return;
             }
         }
@@ -783,10 +935,21 @@ class BahaTube extends EventEmitter {
         //   queue.filters.push(filter);
         if (queue.filter == filter) queue.filter = null;
         else queue.filter = filter;
-        this._playSong(message);
+        this._playSong(message, false);
         if (!this.options.emitNewSongOnly) this.emit("playSong", message, queue, queue.songs[0]);
         return queue.filter;
     }
+
+     validURL(str) {
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return !!pattern.test(str);
+    }
+
 
     _emitPlaySong(queue) {
         if (
@@ -805,7 +968,7 @@ class BahaTube extends EventEmitter {
      * @ignore
      * @param {Discord.Message} message The message from guild channel
      */
-    async _playSong(message) {
+    async _playSong(message, emit = true) {
         let queue = this.getQueue(message);
         queue.songs[0].start_time = moment().unix();
         this.guildQueues.set(message.guild.id, queue);
@@ -849,7 +1012,7 @@ class BahaTube extends EventEmitter {
                     queue.skipped = false;
                     if (queue.repeatMode != 1 || queue.skipped) queue.removeFirstSong();
                     else queue.updateDuration();
-                    if (this._emitPlaySong(queue)) this.emit("playSong", message, queue, queue.songs[0]);
+                    if (this._emitPlaySong(queue) && emit) this.emit("playSong", message, queue, queue.songs[0]);
                     return this._playSong(message);
                 })
                 .on("error", e => {
@@ -857,7 +1020,7 @@ class BahaTube extends EventEmitter {
                     this.emit("error", message, "DispatcherErrorWhenPlayingSong");
                     queue.removeFirstSong();
                     if (queue.songs.length > 0) {
-                        this.emit("playSong", message, queue, queue.songs[0]);
+                        if (emit)  this.emit("playSong", message, queue, queue.songs[0]);
                         this._playSong(message);
                     }
                 });
@@ -867,7 +1030,7 @@ class BahaTube extends EventEmitter {
     }
 }
 
-module.exports = BahaTube;
+module.exports = Distube;
 
 /**
  * Youtube playlist author
@@ -909,9 +1072,9 @@ module.exports = BahaTube;
  */
 
 /**
- *  Emitted after BahaTube add playlist to guild queue
+ *  Emitted after Distube add playlist to guild queue
  *
- * @event BahaTube#addList
+ * @event Distube#addList
  * @param {Discord.Message} message The message from guild channel
  * @param {Queue} queue The guild queue
  * @param {ytpl_result} playlist Playlist info
@@ -924,9 +1087,9 @@ module.exports = BahaTube;
  */
 
 /**
- *  Emitted after BahaTube add new song to guild queue
+ *  Emitted after Distube add new song to guild queue
  *
- * @event BahaTube#addSong
+ * @event Distube#addSong
  * @param {Discord.Message} message The message from guild channel
  * @param {Queue} queue The guild queue
  * @param {Song} song Added song
@@ -938,18 +1101,18 @@ module.exports = BahaTube;
  */
 
 /**
- * Emitted when there is no user in VoiceChannel and {@link BahaTubeOptions}.leaveOnEmpty is `true`.
+ * Emitted when there is no user in VoiceChannel and {@link DisTubeOptions}.leaveOnEmpty is `true`.
  *
- * @event BahaTube#empty
+ * @event Distube#empty
  * @param {Discord.Message} message The message from guild channel
  * @example
  * distube.on("empty", message => message.channel.send("Channel is empty. Leaving the channel"))
  */
 
 /**
- * Emitted when {@link BahaTube} encounters an error.
+ * Emitted when {@link Distube} encounters an error.
  *
- * @event BahaTube#error
+ * @event Distube#error
  * @param {Discord.Message} message The message from guild channel
  * @param {Error} err The error encountered
  * @example
@@ -960,18 +1123,18 @@ module.exports = BahaTube;
 
 /**
  * Emitted when there is no more song in the queue and {@link Queue#autoplay} is `false`.
- * BahaTube will leave voice channel if {@link BahaTubeOptions}.leaveOnFinish is `true`
+ * Distube will leave voice channel if {@link DisTubeOptions}.leaveOnFinish is `true`
  *
- * @event BahaTube#finish
+ * @event Distube#finish
  * @param {Discord.Message} message The message from guild channel
  * @example
  * distube.on("finish", message => message.channel.send("No more song in queue"));
  */
 
 /**
- * `@2.3.0` Emitted when BahaTube initialize a queue to change queue default properties.
+ * `@2.3.0` Emitted when Distube initialize a queue to change queue default properties.
  *
- * @event BahaTube#initQueue
+ * @event Distube#initQueue
  * @param {Queue} queue The guild queue
  * @example
  * distube.on("initQueue", queue => {
@@ -982,19 +1145,19 @@ module.exports = BahaTube;
 
 /**
  * Emitted when {@link Queue#autoplay} is `true`, the {@link Queue#songs} is empty and
- * BahaTube cannot find related songs to play
+ * Distube cannot find related songs to play
  *
- * @event BahaTube#noRelated
+ * @event Distube#noRelated
  * @param {Discord.Message} message The message from guild channel
  * @example
  * distube.on("noRelated", message => message.channel.send("Can't find related video to play. Stop playing music."));
  */
 
 /**
- * Emitted after BahaTube play the first song of the playlist
+ * Emitted after Distube play the first song of the playlist
  * and add the rest to the guild queue
  *
- * @event BahaTube#playList
+ * @event Distube#playList
  * @param {Discord.Message} message The message from guild channel
  * @param {Queue} queue The guild queue
  * @param {ytpl_result} playlist Playlist info
@@ -1007,10 +1170,10 @@ module.exports = BahaTube;
  */
 
 /**
- * Emitted when BahaTube play a song.
- * If {@link BahaTubeOptions}.emitNewSongOnly is `true`, event is not emitted when looping a song or next song is the previous one
+ * Emitted when Distube play a song.
+ * If {@link DisTubeOptions}.emitNewSongOnly is `true`, event is not emitted when looping a song or next song is the previous one
  *
- * @event BahaTube#playSong
+ * @event Distube#playSong
  * @param {Discord.Message} message The message from guild channel
  * @param {Queue} queue The guild queue
  * @param {Song} song Playing song
@@ -1022,26 +1185,26 @@ module.exports = BahaTube;
  */
 
 /**
- * Emitted when {@link BahaTubeOptions}.searchSongs is `true`.
+ * Emitted when {@link DisTubeOptions}.searchSongs is `true`.
  * Search will be canceled if user's next message is invalid number or timeout (60s)
  *
- * @event BahaTube#searchCancel
+ * @event Distube#searchCancel
  * @param {Discord.Message} message The message from guild channel
  * @example
- * // BahaTubeOptions.searchSongs = true
+ * // DisTubeOptions.searchSongs = true
  * distube.on("searchCancel", (message) => message.channel.send(`Searching canceled`));
  */
 
 /**
- * Emitted when {@link BahaTubeOptions}.searchSongs is `true`.
- * BahaTube will wait for user's next message to choose song manually
- * if song param of {@link BahaTube#play}() is invalid url
+ * Emitted when {@link DisTubeOptions}.searchSongs is `true`.
+ * Distube will wait for user's next message to choose song manually
+ * if song param of {@link Distube#play}() is invalid url
  *
- * @event BahaTube#searchResult
+ * @event Distube#searchResult
  * @param {Discord.Message} message The message from guild channel
  * @param {Song[]} result Searched result (max length = 12)
  * @example
- * // BahaTubeOptions.searchSongs = true
+ * // DisTubeOptions.searchSongs = true
  * distube.on("searchResult", (message, result) => {
  *     let i = 0;
  *     message.channel.send(`**Choose an option from below**\n${result.map(song => `**${++i}**. ${song.title} - \`${song.duration}\``).join("\n")}\n*Enter anything else or wait 60 seconds to cancel*`);
