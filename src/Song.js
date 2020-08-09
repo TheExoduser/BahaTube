@@ -3,7 +3,7 @@
 const duration = require("./duration"),
   Discord = require("discord.js"),
   ytdl = require("ytdl-core"),
-  DisTube = require("./Distube");
+  DisTube = require("./DisTube");
 
 /** Class representing a song. */
 class Song {
