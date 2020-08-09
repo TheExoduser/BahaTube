@@ -1,8 +1,8 @@
 {
-  "name": "bahatube",
+  "name": "distube",
   "version": "2.3.5",
   "description": "A Discord.js v12 module to easily manage music commands and play Youtube song on Discord without any API key.",
-  "main": "src/BahaTube.js",
+  "main": "src/Distube.js",
   "typings": "typings/DisTube.d.ts",
   "scripts": {
     "types": "tsc -p .",
@@ -34,9 +34,13 @@
   "author": "TheExoduser",
   "license": "MIT",
   "dependencies": {
+    "async-parallel": "^1.2.3",
     "discord-ytdl-core": "^4.0.6",
     "ffmpeg-static": "^4.2.6",
     "moment": "^2.27.0",
+    "simple-youtube-api": "^5.2.1",
+    "soundcloud-downloader": "^0.1.3",
+    "spotify-web-api-node": "^4.0.0",
     "ytpl": "^0.2.3",
     "ytsr": "^0.1.20"
   },

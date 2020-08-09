@@ -11,7 +11,10 @@ const ytdl = require("discord-ytdl-core"),
     asy = require("async"),
     spotify = require("spotify-web-api-node"),
     YouTube = require("simple-youtube-api"),
-    Parallel = require("async-parallel"); // eslint-disable-line
+    SoundCloud = require('soundcloud-downloader');
+    Parallel = require("async-parallel"),
+    duration = require("./duration"),
+    { Converter } = require("ffmpeg-stream");// eslint-disable-line
 
 const toSecond = (string) => {
     let h = 0,
@@ -52,6 +55,7 @@ const DisTubeOptions = {
     searchSongs: false,
     youtubeCookie: null,
     youtubeIdentityToken: null,
+    soundcloudClientId: null,
     spotifyClientId: null,
     spotifyClientSecret: null
 };
@@ -108,6 +112,7 @@ const ffmpegFilters = {
 }
 
 const spotifyApi = new spotify();
+let soundcloud = null;
 let youtube = null;
 
 /**
@@ -202,22 +207,25 @@ class Distube extends EventEmitter {
      * @returns {Promise<Song>} Resolved Song
      */
     async _resolveSong(message, song, type = "yt") {
-        if (typeof song === "object") {
+        if (typeof song === "object" && type !== "soundcloud_track") {
             song.user = message.author;
             return song;
+        } else if (type === "soundcloud_track") {
+            return this._searchSong(message, `${song.res.title} ${song.res.user.username}`, true, 1, "soundcloud_track", song.res.artwork_url);
         } else if (type === "spotify_track") {
             let s = (await spotifyApi.getTrack(song)).body;
-            return await this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1);
+            return this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1);
         } else if (!ytdl.validateURL(song))
-            return await this._searchSong(message, song, true, 1);
+            return this._searchSong(message, song, true, 1);
         else {
             let info = await ytdl.getBasicInfo(song, {requestOptions: this.requestOptions});
             return new Song(info, message.author);
         }
     }
 
-    async _handleSong(message, song, skip = false, type = "yt") {
+    async _handleSong(message, song, skip = false) {
         if (!song) return;
+
         if (this.isPlaying(message)) {
             let queue = this._addToQueue(message, song, skip);
             if (skip) this.skip(message);
@@ -245,13 +253,18 @@ class Distube extends EventEmitter {
     async play(message, song) {
         if (!song) return;
         try {
+            let sc = await this.parseSoundcloudUrl(song);
             let spot = this.parseSpotifyUrl(song);
 
-            if (spot !== false && spot.type === "playlist") {
+            if (sc !== false && sc.type === "track") {
+                await this._handleSong(message, await this._resolveSong(message, sc, "soundcloud_track"));
+            } else if (sc !== false && sc.type === "playlist") {
+                await this._handlePlaylist(message, song, false, "soundcloud_playlist", sc.id);
+            } else if (spot !== false && spot.type === "playlist") {
                 await this._handlePlaylist(message, song, false, "spotify_playlist", spot.id);
             } else if (spot !== false && spot.type === "album") {
                 await this._handlePlaylist(message, song, false, "spotify_album", spot.id);
-            } else if (spot !== false && spot.type === "track") {
+            } else if (spot !== false && spot.type === "track") {d
                 await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
             } else if (ytpl.validateURL(song)) {
                 await this._handlePlaylist(message, song, false, "yt");
@@ -307,13 +320,64 @@ class Distube extends EventEmitter {
             } else {
                 return false;
             }
-        } else if (this.validURL(song)) {
+        } else if (this.isValidHttpUrl(song)) {
             let q = url.parse(song);
             let qq = q.pathname.split("/").splice(1);
             if ((q.hostname === "open.spotify.com") && (qq[0] === "track" || qq[0] === "album" || qq[0] === "playlist")) {
                 return {
                     type: qq[0],
                     id: qq[1]
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Validate Spotify url
+     * @param {(string)} song Spotify url
+     * @returns {Promise<boolean>}
+     */
+    validateSoundcloudUrl(song) {
+        if (typeof this.parseSoundcloudUrl(song) != "object") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param song
+     * @returns {Promise<boolean|{id: string, type: string}>}
+     */
+    async parseSoundcloudUrl(song) {
+        if (typeof song !== "string") {
+            return false;
+        }
+
+        if (await SoundCloud.isValidUrl(song)) {
+            let resSong = null, resPlaylist = null;
+
+            try {
+                resSong = await SoundCloud.getInfo(song, DisTubeOptions.soundcloudClientId);
+                resPlaylist = await SoundCloud.getSetInfo(song, DisTubeOptions.soundcloudClientId);
+            } catch (e) {}
+
+            if (resPlaylist != null) {
+                return {
+                    type: "playlist",
+                    id: resPlaylist.id,
+                    res: resPlaylist
+                }
+            } else if (resSong != null) {
+                return {
+                    type: "track",
+                    id: resSong.id,
+                    res: resSong
                 }
             } else {
                 return false;
@@ -407,16 +471,18 @@ class Distube extends EventEmitter {
      * @param {Discord.Message} message The message from guild channel
      * @param {(string|object)} arg2 Youtube playlist url
      */
-    async _handlePlaylist(message, arg2, skip = false, source = "yt", spotify_id = null) {
+    async _handlePlaylist(message, arg2, skip = false, source = "yt", playlist_id = null) {
         let playlist = null
         if (typeof arg2 == "string") {
-            if (spotify_id !== null) {
+            if (source === "soundcloud_playlist" && arg2 !== null) {
+                return;
+            } else if ((source === "spotify_album" || source === "spotify_playlist") && playlist_id !== null) {
                 let erg = null;
 
                 if (source === "spotify_album") {
-                    erg = (await spotifyApi.getAlbum(spotify_id)).body;
+                    erg = (await spotifyApi.getAlbum(arg2)).body;
                 } else if (source === "spotify_playlist") {
-                    erg = (await spotifyApi.getPlaylist(spotify_id)).body;
+                    erg = (await spotifyApi.getPlaylist(arg2)).body;
                 } else {
                     throw Error("SpotifyInvalidUrl");
                 }
@@ -507,7 +573,7 @@ class Distube extends EventEmitter {
      * @throws {Error}
      * @returns {Song} Song info
      */
-    async _searchSong(message, name, emit = true, limit = 12) {
+    async _searchSong(message, name, emit = true, limit = 12, type = "yt", thumbnail = null) {
         let search = await ytsr(name, {limit: limit});
         let videos = search.items.filter(val => val.duration || val.type == 'video');
         if (videos.length === 0) throw "SearchNotFound";
@@ -533,7 +599,7 @@ class Distube extends EventEmitter {
             }
         }
         song = await ytdl.getBasicInfo(song.link, {requestOptions: this.requestOptions})
-        return new Song(song, message.author);
+        return new Song(song, message.author, type, thumbnail);
     }
 
     /**
@@ -940,6 +1006,18 @@ class Distube extends EventEmitter {
         return queue.filter;
     }
 
+     isValidHttpUrl(string) {
+        let url;
+
+        try {
+            url = new URL(string);
+        } catch (_) {
+            return false;
+        }
+
+        return url.protocol === "http:" || url.protocol === "https:";
+    }
+
      validURL(str) {
         var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
             '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
@@ -989,6 +1067,7 @@ class Distube extends EventEmitter {
                 type: 'opus',
                 volume: queue.volume / 100
             });
+
             queue.dispatcher = dispatcher;
             dispatcher
                 .on("finish", async () => {

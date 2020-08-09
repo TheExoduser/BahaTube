@@ -3,7 +3,7 @@
 const duration = require("./duration"),
   Discord = require("discord.js"),
   ytdl = require("ytdl-core"),
-  DisTube = require("./BahaTube");
+  DisTube = require("./Distube");
 
 /** Class representing a song. */
 class Song {
@@ -12,7 +12,7 @@ class Song {
    * @param {(ytdl.videoInfo|DisTube.ytpl_item)} video Youtube video info
    * @param {Discord.User} user Requested user
    */
-  constructor(video, user) {
+  constructor(video, user, type, thumbnail = null) {
     /**
      * User requested
      * @type {Discord.User}
@@ -32,7 +32,7 @@ class Song {
      * Song duration.
      * @type {number}
      */
-    this.duration = video.duration || parseInt(video.videoDetails.lengthSeconds, 10) || 0;
+    this.duration = video.duration || parseInt((video.videoDetails ? video.videoDetails.lengthSeconds : video.length_seconds), 10) || 0;
     /**
      * Formatted duration string `hh:mm:ss`.
      * @type {string}
@@ -47,7 +47,7 @@ class Song {
      * Video thumbnail.
      * @type {string}
      */
-    this.thumbnail = video.videoDetails ? video.videoDetails.thumbnail.thumbnails[video.videoDetails.thumbnail.thumbnails.length - 1].url : video.thumbnail;
+    this.thumbnail = thumbnail !== null ? thumbnail : (video.videoDetails ? video.videoDetails.thumbnail.thumbnails[video.videoDetails.thumbnail.thumbnails.length - 1].url : video.thumbnail);
     /**
      * Related videos (for autoplay mode) 
      * @type {ytdl.relatedVideo[]}
@@ -59,6 +59,13 @@ class Song {
      * @type {null}
      */
     this.start_time = null;
+
+    /**
+     * Set the type of song (YT, Soundcloud, Spotify)
+     * @type {null}
+     */
+    this.type = type || null;
+
   }
 }
 
