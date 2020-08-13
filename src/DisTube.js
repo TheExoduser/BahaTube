@@ -10,9 +10,12 @@ const ytdl = require("discord-ytdl-core"),
     url = require("url"),
     spotify = require("spotify-web-api-node"),
     YouTube = require("simple-youtube-api"),
-    SoundCloud = require('soundcloud-downloader');
-Parallel = require("async-parallel"),
-    duration = require("./duration");// eslint-disable-line
+    SoundCloud = require('soundcloud-downloader'),
+    Parallel = require("async-parallel"),
+    duration = require("./duration"),
+    prism = require("prism-media"),
+    sckf = require("soundcloud-key-fetch"),
+    SCDL = require("node-scdl");// eslint-disable-line
 
 const toSecond = (string) => {
     let h = 0,
@@ -111,6 +114,8 @@ const ffmpegFilters = {
 
 const spotifyApi = new spotify();
 let soundcloud = null;
+let scdl = null;
+
 let youtube = null;
 
 /**
@@ -183,6 +188,8 @@ class Distube extends EventEmitter {
 
         youtube = new YouTube(DisTubeOptions.youtubeIdentityToken);
 
+        soundcloud = new SCDL(DisTubeOptions.soundcloudClientId || sckf.fetchKey());
+
         spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
         spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
 
@@ -209,6 +216,19 @@ class Distube extends EventEmitter {
             song.user = message.author;
             return song;
         } else if (type === "soundcloud_track") {
+            return {
+                user: message.author,
+                id: song.id,
+                name: song.res.title,
+                duration: (song.res.duration / 1000),
+                formattedDuration: duration(song.res.duration),
+                url: song.res.permalink_url,
+                thumbnail: song.res.artwork_url,
+                related: null,
+                start_time: null,
+                type: "soundcloud_track"
+            }
+
             return this._searchSong(message, `${song.res.title} ${song.res.user.username}`, true, 1, "soundcloud_track", song.res.artwork_url);
         } else if (type === "spotify_track") {
             let s = (await spotifyApi.getTrack(song)).body;
@@ -263,7 +283,6 @@ class Distube extends EventEmitter {
             } else if (spot !== false && spot.type === "album") {
                 await this._handlePlaylist(message, song, false, "spotify_album", spot.id);
             } else if (spot !== false && spot.type === "track") {
-                d
                 await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
             } else if (ytpl.validateURL(song)) {
                 await this._handlePlaylist(message, song, false, "yt");
@@ -338,8 +357,7 @@ class Distube extends EventEmitter {
             try {
                 resSong = await SoundCloud.getInfo(song, DisTubeOptions.soundcloudClientId);
                 resPlaylist = await SoundCloud.getSetInfo(song, DisTubeOptions.soundcloudClientId);
-            } catch (e) {
-            }
+            } catch (e) {}
 
             if (resPlaylist != null) {
                 return {
@@ -379,9 +397,14 @@ class Distube extends EventEmitter {
     async playSkip(message, song) {
         if (!song) return;
         try {
+            let sc = await this.parseSoundcloudUrl(song);
             let spot = this.parseSpotifyUrl(song);
 
-            if (spot !== false && spot.type === "playlist") {
+            if (sc !== false && sc.type === "track") {
+                await this._handleSong(message, await this._resolveSong(message, sc, "soundcloud_track"));
+            } else if (sc !== false && sc.type === "playlist") {
+                await this._handlePlaylist(message, song, false, "soundcloud_playlist", sc.id);
+            } else if (spot !== false && spot.type === "playlist") {
                 await this._handlePlaylist(message, song, true, "spotify_playlist", spot.id);
             } else if (spot !== false && spot.type === "album") {
                 await this._handlePlaylist(message, song, true, "spotify_album", spot.id);
@@ -449,6 +472,7 @@ class Distube extends EventEmitter {
         let playlist = null
         if (typeof arg2 == "string") {
             if (source === "soundcloud_playlist" && arg2 !== null) {
+                throw Error("SoundCloudSetsNotSupported");
                 return;
             } else if ((source === "spotify_album" || source === "spotify_playlist") && playlist_id !== null) {
                 let erg = null;
@@ -929,6 +953,11 @@ class Distube extends EventEmitter {
         let queue = this.getQueue(message);
         if (!queue) throw new Error("NotPlaying");
         let song = queue.songs[0];
+
+        if (song.type !== "yt") {
+            song = await this._searchSong(message, song.name, false, 1, "yt");
+        }
+
         let related = song.related;
         if (!related) {
             related = await ytdl.getBasicInfo(song.url, {requestOptions: this.requestOptions});
@@ -1022,19 +1051,50 @@ class Distube extends EventEmitter {
         if (!queue) return;
         let encoderArgs = queue.filter ? ["-af", ffmpegFilters[queue.filter]] : null;
         try {
-            let dispatcher = queue.connection.play(ytdl(queue.songs[0].url, {
-                opusEncoded: true,
-                filter: 'audioonly',
-                quality: 'highestaudio',
-                highWaterMark: this.options.highWaterMark,
-                requestOptions: this.requestOptions,
-                // encoderArgs: ['-af', filters.map(filter => ffmpegFilters[filter]).join(",")]
-                encoderArgs,
-            }), {
-                highWaterMark: 1,
-                type: 'opus',
-                volume: queue.volume / 100
-            });
+            let dispatcher = null;
+
+            if (queue.songs[0].type === "soundcloud_track") {
+                const transcoder = new prism.FFmpeg({
+                    args: [
+                        '-analyzeduration', '0',
+                        '-loglevel', '0',
+                        '-f', 's16le',
+                        '-ar', '48000',
+                        '-ac', '2',
+                        '-af', (encoderArgs === null ? "" : encoderArgs[1])
+                    ],
+                });
+                //const opus = new prism.opus.Encoder({ rate: 48000, channels: 2, frameSize: 960 });
+
+                const input = await soundcloud.getStream(queue.songs[0].id);
+                const output = input.pipe(transcoder);
+                //const outputStream = output.pipe(opus);
+                //outputStream.on("close", () => {
+                //    transcoder.destroy();
+                //    opus.destroy();
+                //});
+
+                dispatcher = queue.connection.play(soundcloud.getStream(queue.songs[0].id), {
+                    highWaterMark: 1,
+                    type: 'converted',
+                    volume: queue.volume / 100
+                });
+
+            } else {
+                dispatcher = queue.connection.play(ytdl(queue.songs[0].url, {
+                    opusEncoded: true,
+                    filter: 'audioonly',
+                    quality: 'highestaudio',
+                    highWaterMark: this.options.highWaterMark,
+                    requestOptions: this.requestOptions,
+                    // encoderArgs: ['-af', filters.map(filter => ffmpegFilters[filter]).join(",")]
+                    encoderArgs,
+                }), {
+                    highWaterMark: 1,
+                    type: 'opus',
+                    volume: queue.volume / 100
+                });
+            }
 
             queue.dispatcher = dispatcher;
             dispatcher
@@ -1072,6 +1132,7 @@ class Distube extends EventEmitter {
                     }
                 });
         } catch (e) {
+            console.log(e);
             this.emit("error", message, `Cannot play \`${queue.songs[0].id}\`. Error: \`${e}\``);
         }
     }
