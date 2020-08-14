@@ -254,6 +254,19 @@ class Distube extends EventEmitter {
         }
     }
 
+    async _handleStream(message, stream, skip = false) {
+        if (!stream) return;
+
+        if (this.isPlaying(message)) {
+            let queue = this._addToQueue(message, stream, skip, true);
+            if (skip) this.skip(message);
+            else this.emit("addStream", message, queue, queue.songs[queue.songs.length - 1]);
+        } else {
+            let queue = await this._newQueue(message, song);
+            this.emit("playStream", message, queue, queue.songs[0]);
+        }
+    }
+
     /**
      * Play / add a song from Youtube video url or playlist from Youtube playlist url. Search and play a song if it is not a valid url.
      * @async
@@ -291,6 +304,31 @@ class Distube extends EventEmitter {
             }
         } catch (e) {
             this.emit("error", message, `play(${song}) encountered: ${e}`);
+        }
+    }
+
+    async playStream(message, name, icon, sourceUrl, websiteUrl, tracklistUrl) {
+        if (!sourceUrl) return;
+
+        try {
+            let song = {
+                id: null,
+                user: message.author,
+                name: name,
+                duration: 0,
+                formatDuration: null,
+                url: sourceUrl,
+                website_url: websiteUrl,
+                tracklist_url: tracklistUrl,
+                thumbnail: icon,
+                related: null,
+                start_time: null,
+                type: "stream"
+            }
+
+            await this._handleSong(message, song);
+        } catch (e) {
+            this.emit("error", message, `playStream(${song}) encountered: ${e}`);
         }
     }
 
@@ -668,7 +706,7 @@ class Distube extends EventEmitter {
      * @throws {NotInVoice} if result is empty
      * @returns {Queue}
      */
-    _addToQueue(message, song, unshift = false) {
+    _addToQueue(message, song, unshift = false, stream = false) {
         let queue = this.getQueue(message);
         if (!queue) throw new Error("NotPlaying");
         if (!song) throw new Error("NoSong");
@@ -1080,6 +1118,13 @@ class Distube extends EventEmitter {
                     volume: queue.volume / 100
                 });
 
+            } else if (queue.songs[0].type === "stream") {
+                dispatcher = queue.connection.play(queue.songs[0].url, {
+                    highWaterMark: 512,
+                    bitrate: 128,
+                    fec: true,
+                    volume: queue.volume / 100
+                });
             } else {
                 dispatcher = queue.connection.play(ytdl(queue.songs[0].url, {
                     opusEncoded: true,
@@ -1097,6 +1142,7 @@ class Distube extends EventEmitter {
             }
 
             queue.dispatcher = dispatcher;
+
             dispatcher
                 .on("finish", async () => {
                     if (queue.stopped) return;
@@ -1107,7 +1153,7 @@ class Distube extends EventEmitter {
                     }
                     if (queue.repeatMode == 2 && !queue.skipped) queue.songs.push(queue.songs[0]);
                     if (queue.songs.length <= 1 && (queue.skipped || !queue.repeatMode)) {
-                        if (queue.autoplay) await this.runAutoplay(message);
+                        if (queue.songs[0].type !== "stream" && queue.autoplay) await this.runAutoplay(message);
                         if (queue.songs.length <= 1) {
                             this._deleteQueue(message);
                             if (this.options.leaveOnFinish && !queue.stopped)
