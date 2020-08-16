@@ -300,7 +300,8 @@ class DisTube extends EventEmitter {
                 await this._handleSong(message, await this._resolveSong(message, song));
             }
         } catch (e) {
-            this.emit("error", message, `play(${song}) encountered: ${e}`);
+            console.error(e);
+            this.emit("error", message, `Error encountered while playing song \`${song}\`! Error: ${e.message}`);
         }
     }
 
@@ -325,7 +326,8 @@ class DisTube extends EventEmitter {
 
             await this._handleSong(message, song, true);
         } catch (e) {
-            this.emit("error", message, `playStream(${song}) encountered: ${e}`);
+            console.error(e);
+            this.emit("error", message, `Error encountered while playing stream \`${name}\`! Error: ${e.message}`);
         }
     }
 
