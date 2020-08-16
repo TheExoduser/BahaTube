@@ -323,7 +323,7 @@ class DisTube extends EventEmitter {
                 type: "stream"
             }
 
-            await this._handleSong(message, song);
+            await this._handleSong(message, song, true);
         } catch (e) {
             this.emit("error", message, `playStream(${song}) encountered: ${e}`);
         }
