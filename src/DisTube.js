@@ -512,9 +512,9 @@ class DisTube extends EventEmitter {
                 let erg = null;
 
                 if (source === "spotify_album") {
-                    erg = (await spotifyApi.getAlbum(arg2)).body;
+                    erg = (await spotifyApi.getAlbum(playlist_id)).body;
                 } else if (source === "spotify_playlist") {
-                    erg = (await spotifyApi.getPlaylist(arg2)).body;
+                    erg = (await spotifyApi.getPlaylist(playlist_id)).body;
                 } else {
                     throw Error("SpotifyInvalidUrl");
                 }
