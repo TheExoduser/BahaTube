@@ -123,51 +123,62 @@ let youtube = null;
  * @extends EventEmitter
  */
 class DisTube extends EventEmitter {
-  get version() { return require("../package.json").version }
-  /**
-   * `@2.2.4` DisTube's current version.
-   * @type {string}
-   * @readonly
-   */
-  static get version() { return require("../package.json").version }
-  /**
-   * Create new DisTube.
-   * @param {Discord.Client} client Discord.JS client
-   * @param {DisTubeOptions} [otp={}] Custom DisTube options
-   * @example
-   * const Discord = require('discord.js'),
-   *     DisTube = require('distube'),
-   *     client = new Discord.Client();
-   * // Create a new DisTube
-   * const distube = new DisTube(client, { searchSongs: true });
-   * // client.DisTube = distube // make it access easily
-   * client.login("Your Discord Bot Token")
-   */
-  constructor(client, otp = {}) {
-    super();
-    if (!client) throw new SyntaxError("Invalid Discord.Client");
+    get version() {
+        return require("../package.json").version
+    }
 
     /**
-     * Discord.JS client
-     * @type {Discord.Client}
+     * `@2.2.4` DisTube's current version.
+     * @type {string}
+     * @readonly
      */
-    this.client = client;
+    static get version() {
+        return require("../package.json").version
+    }
 
     /**
-     * Collection of guild queues
-     * @type {Map<string, Queue>}
+     * Create new DisTube.
+     * @param {Discord.Client} client Discord.JS client
+     * @param {DisTubeOptions} [otp={}] Custom DisTube options
+     * @example
+     * const Discord = require('discord.js'),
+     *     DisTube = require('distube'),
+     *     client = new Discord.Client();
+     * // Create a new DisTube
+     * const distube = new DisTube(client, { searchSongs: true });
+     * // client.DisTube = distube // make it access easily
+     * client.login("Your Discord Bot Token")
      */
-    this.guildQueues = new Discord.Collection();
+    constructor(client, otp = {}) {
+        super();
+        if (!client) throw new SyntaxError("Invalid Discord.Client");
 
-    /**
-     * DisTube options
-     * @type {DisTubeOptions}
-     */
-    this.options = DisTubeOptions;
-    for (let key in otp)
-      this.options[key] = otp[key];
+        /**
+         * Discord.JS client
+         * @type {Discord.Client}
+         */
+        this.client = client;
 
-    this.requestOptions = this.options.youtubeCookie ? { headers: { cookie: this.options.youtubeCookie, 'x-youtube-identity-token': this.options.youtubeIdentityToken } } : null;
+        /**
+         * Collection of guild queues
+         * @type {Map<string, Queue>}
+         */
+        this.guildQueues = new Discord.Collection();
+
+        /**
+         * DisTube options
+         * @type {DisTubeOptions}
+         */
+        this.options = DisTubeOptions;
+        for (let key in otp)
+            this.options[key] = otp[key];
+
+        this.requestOptions = this.options.youtubeCookie ? {
+            headers: {
+                cookie: this.options.youtubeCookie,
+                'x-youtube-identity-token': this.options.youtubeIdentityToken
+            }
+        } : null;
 
         if (this.options.leaveOnEmpty) client.on("voiceStateUpdate", (oldState) => {
             if (!oldState || !oldState.channel) return;
@@ -239,17 +250,17 @@ class DisTube extends EventEmitter {
         }
     }
 
-  async _handleSong(message, song, skip = false) {
-    if (!song) return;
-    if (this.isPlaying(message)) {
-      let queue = this._addToQueue(message, song, skip);
-      if (skip) this.skip(message);
-      else this.emit("addSong", message, queue, queue.songs[queue.songs.length - 1]);
-    } else {
-      let queue = await this._newQueue(message, song);
-      this.emit("playSong", message, queue, queue.songs[0]);
+    async _handleSong(message, song, skip = false) {
+        if (!song) return;
+        if (this.isPlaying(message)) {
+            let queue = this._addToQueue(message, song, skip);
+            if (skip) this.skip(message);
+            else this.emit("addSong", message, queue, queue.songs[queue.songs.length - 1]);
+        } else {
+            let queue = await this._newQueue(message, song);
+            this.emit("playSong", message, queue, queue.songs[0]);
+        }
     }
-  }
 
     async _handleStream(message, stream, skip = false) {
         if (!stream) return;
@@ -440,7 +451,8 @@ class DisTube extends EventEmitter {
             try {
                 resSong = await SoundCloud.getInfo(song, DisTubeOptions.soundcloudClientId);
                 resPlaylist = await SoundCloud.getSetInfo(song, DisTubeOptions.soundcloudClientId);
-            } catch (e) {}
+            } catch (e) {
+            }
 
             if (resPlaylist != null) {
                 return {
@@ -503,42 +515,44 @@ class DisTube extends EventEmitter {
         }
     }
 
-  /**
-   * `@2.1.0` Play or add array of Youtube video urls.
-   * {@link DisTube#event:playList} or {@link DisTube#event:addList} will be emitted
-   * with `playlist`'s properties include `properties` parameter's properties,
-   * `user`, `items`, `total_items`, `duration`, `formattedDuration`, `thumbnail` like {@link ytpl_result}
-   * @async
-   * @param {Discord.Message} message The message from guild channel
-   * @param {string[]} urls Array of Youtube url
-   * @param {object} [properties={}] Additional properties such as `title`
-   * @param {boolean} [playSkip=false] Weather or not play this playlist instantly
-   * @example
-   *     let songs = ["https://www.youtube.com/watch?v=xxx", "https://www.youtube.com/watch?v=yyy"];
-   *     distube.playCustomPlaylist(message, songs, { title: "My playlist name" });
-   */
-  async playCustomPlaylist(message, urls, properties = {}, playSkip = false) {
-    if (!urls.length) return;
-    try {
-      let songs = urls.map(song => ytdl.getBasicInfo(song, { requestOptions: this.requestOptions }).catch(e => { throw Error(song + " encountered an error: " + e) }));
-      songs = await Promise.all(songs);
-      let resolvedSongs = songs.filter(song => song);
-      let duration = resolvedSongs.reduce((prev, next) => prev + parseInt(next.videoDetails.lengthSeconds, 10), 0);
-      let thumbnails = resolvedSongs[0].videoDetails.thumbnail.thumbnails;
-      let playlist = {
-        thumbnail: thumbnails[thumbnails.length - 1].url,
-        ...properties,
-        user: message.author,
-        items: resolvedSongs,
-        total_items: resolvedSongs.length,
-        duration: duration,
-        formattedDuration: formatDuration(duration * 1000)
-      };
-      await this._handlePlaylist(message, playlist, playSkip);
-    } catch (e) {
-      this.emit("error", message, e);
+    /**
+     * `@2.1.0` Play or add array of Youtube video urls.
+     * {@link DisTube#event:playList} or {@link DisTube#event:addList} will be emitted
+     * with `playlist`'s properties include `properties` parameter's properties,
+     * `user`, `items`, `total_items`, `duration`, `formattedDuration`, `thumbnail` like {@link ytpl_result}
+     * @async
+     * @param {Discord.Message} message The message from guild channel
+     * @param {string[]} urls Array of Youtube url
+     * @param {object} [properties={}] Additional properties such as `title`
+     * @param {boolean} [playSkip=false] Weather or not play this playlist instantly
+     * @example
+     *     let songs = ["https://www.youtube.com/watch?v=xxx", "https://www.youtube.com/watch?v=yyy"];
+     *     distube.playCustomPlaylist(message, songs, { title: "My playlist name" });
+     */
+    async playCustomPlaylist(message, urls, properties = {}, playSkip = false) {
+        if (!urls.length) return;
+        try {
+            let songs = urls.map(song => ytdl.getBasicInfo(song, {requestOptions: this.requestOptions}).catch(e => {
+                throw Error(song + " encountered an error: " + e)
+            }));
+            songs = await Promise.all(songs);
+            let resolvedSongs = songs.filter(song => song);
+            let duration = resolvedSongs.reduce((prev, next) => prev + parseInt(next.videoDetails.lengthSeconds, 10), 0);
+            let thumbnails = resolvedSongs[0].videoDetails.thumbnail.thumbnails;
+            let playlist = {
+                thumbnail: thumbnails[thumbnails.length - 1].url,
+                ...properties,
+                user: message.author,
+                items: resolvedSongs,
+                total_items: resolvedSongs.length,
+                duration: duration,
+                formattedDuration: formatDuration(duration * 1000)
+            };
+            await this._handlePlaylist(message, playlist, playSkip);
+        } catch (e) {
+            this.emit("error", message, e);
+        }
     }
-  }
 
     /**
      * PLay / add a playlist
@@ -638,25 +652,25 @@ class DisTube extends EventEmitter {
         }
     }
 
-  /**
-   * `@2.0.0` Search for a song. You can customize how user answers instead of send a number
-   * (default of {@link DisTube#play}() search when `searchSongs` is `true`).
-   * Then use {@link DisTube#play}(message, aResultToPlay) or {@link DisTube#playSkip}() to play it.
-   * @async
-   * @param {string} string The string search for
-   * @throws {NotFound} If not found
-   * @throws {Error} If an error encountered
-   * @returns {Promise<Song[]>} Array of results
-   */
-  async search(string) {
-    let search = await ytsr(string, { limit: 12 });
-    let videos = search.items.filter(val => val.duration || val.type == 'video');
-    if (videos.length === 0) throw Error("NotFound");
-    videos = videos.map(video => ytdl.getBasicInfo(video.link, { requestOptions: this.requestOptions }).catch(() => null));
-    videos = await Promise.all(videos);
-    let songs = videos.filter(v => v).map(video => new Song(video, null));
-    return songs;
-  }
+    /**
+     * `@2.0.0` Search for a song. You can customize how user answers instead of send a number
+     * (default of {@link DisTube#play}() search when `searchSongs` is `true`).
+     * Then use {@link DisTube#play}(message, aResultToPlay) or {@link DisTube#playSkip}() to play it.
+     * @async
+     * @param {string} string The string search for
+     * @throws {NotFound} If not found
+     * @throws {Error} If an error encountered
+     * @returns {Promise<Song[]>} Array of results
+     */
+    async search(string) {
+        let search = await ytsr(string, {limit: 12});
+        let videos = search.items.filter(val => val.duration || val.type == 'video');
+        if (videos.length === 0) throw Error("NotFound");
+        videos = videos.map(video => ytdl.getBasicInfo(video.link, {requestOptions: this.requestOptions}).catch(() => null));
+        videos = await Promise.all(videos);
+        let songs = videos.filter(v => v).map(video => new Song(video, null));
+        return songs;
+    }
 
     /**
      * Search for a song, fire {@link DisTube#event:error} if not found.
@@ -697,31 +711,31 @@ class DisTube extends EventEmitter {
         return new Song(song, message.author, type, thumbnail);
     }
 
-  /**
-   * Create a new guild queue
-   * @async
-   * @private
-   * @ignore
-   * @param {Discord.Message} message The message from guild channel
-   * @param {Song} song Song to play
-   * @throws {NotInVoice} if user not in a voice channel
-   * @returns {Promise<Queue>}
-   */
-  async _newQueue(message, song) {
-    let queue = new Queue(message);
-    this.emit("initQueue", queue);
-    this.guildQueues.set(message.guild.id, queue);
-    let voice = message.member.voice.channel;
-    if (!voice) throw new Error("NotInVoice");
-    queue.connection = await voice.join().catch(err => {
-      this._deleteQueue(message);
-      throw Error("DisTubeCanNotJoinVChannel: " + err);
-    });
-    queue.songs.push(song);
-    queue.updateDuration();
-    this._playSong(message);
-    return queue;
-  }
+    /**
+     * Create a new guild queue
+     * @async
+     * @private
+     * @ignore
+     * @param {Discord.Message} message The message from guild channel
+     * @param {Song} song Song to play
+     * @throws {NotInVoice} if user not in a voice channel
+     * @returns {Promise<Queue>}
+     */
+    async _newQueue(message, song) {
+        let queue = new Queue(message);
+        this.emit("initQueue", queue);
+        this.guildQueues.set(message.guild.id, queue);
+        let voice = message.member.voice.channel;
+        if (!voice) throw new Error("NotInVoice");
+        queue.connection = await voice.join().catch(err => {
+            this._deleteQueue(message);
+            throw Error("DisTubeCanNotJoinVChannel: " + err);
+        });
+        queue.songs.push(song);
+        queue.updateDuration();
+        this._playSong(message);
+        return queue;
+    }
 
     /**
      * Delete a guild queue
