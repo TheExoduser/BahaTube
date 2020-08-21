@@ -282,16 +282,16 @@ class DisTube extends EventEmitter {
         if (!song) return;
         try {
             let sc = await this.parseSoundcloudUrl(song);
-            let spot = this.parseSpotifyUrl(song);
+            let spot = await this.parseSpotifyUrl(song);
 
             if (sc !== false && sc.type === "track") {
                 await this._handleSong(message, await this._resolveSong(message, sc, "soundcloud_track"));
             } else if (sc !== false && sc.type === "playlist") {
                 await this._handlePlaylist(message, song, false, "soundcloud_playlist", sc.id);
             } else if (spot !== false && spot.type === "playlist") {
-                await this._handlePlaylist(message, song, false, "spotify_playlist", spot.id);
+                await this._handlePlaylist(message, song, false, "spotify_playlist", spot);
             } else if (spot !== false && spot.type === "album") {
-                await this._handlePlaylist(message, song, false, "spotify_album", spot.id);
+                await this._handlePlaylist(message, song, false, "spotify_album", spot);
             } else if (spot !== false && spot.type === "track") {
                 await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
             } else if (ytpl.validateURL(song)) {
@@ -314,7 +314,7 @@ class DisTube extends EventEmitter {
                 user: message.author,
                 name: name,
                 duration: 0,
-                formatDuration: null,
+                formattedDuration: null,
                 url: sourceUrl,
                 website_url: websiteUrl,
                 tracklist_url: tracklistUrl,
@@ -347,7 +347,7 @@ class DisTube extends EventEmitter {
      * @param song Spotify url
      * @returns {Promise<boolean|{id: string, type: string}>}
      */
-    parseSpotifyUrl(song) {
+    async parseSpotifyUrl(song) {
         if (typeof song !== "string") {
             return false;
         }
@@ -355,9 +355,39 @@ class DisTube extends EventEmitter {
         if (song.startsWith("spotify:")) {
             let q = song.split(":");
             if (q[1] === "track" || q[1] === "album" || q[1] === "playlist") {
+                let erg = null;
+                switch (q[1]) {
+                    case "track":
+                        erg = (await spotifyApi.getTrack(q[2])).body;
+                        break;
+                    case "album":
+                        erg = (await spotifyApi.getAlbum(q[2])).body;
+
+                        while (erg.tracks.items.length < erg.tracks.total) {
+                            let tmp = (await spotifyApi.getPlaylistTracks(q[2], {offset: erg.tracks.items.length})).body;
+
+                            erg.tracks.items = erg.tracks.items.concat(tmp.items);
+                        }
+
+                        break;
+                    case "playlist":
+                        erg = (await spotifyApi.getPlaylist(q[2])).body;
+
+                        while (erg.tracks.items.length < erg.tracks.total) {
+                            let tmp = (await spotifyApi.getPlaylistTracks(q[2], {offset: erg.tracks.items.length})).body;
+
+                            erg.tracks.items = erg.tracks.items.concat(tmp.items);
+                        }
+
+                        break;
+                    default:
+                        erg = null;
+                }
+
                 return {
                     type: q[1],
-                    id: q[2]
+                    id: q[2],
+                    object: erg
                 }
             } else {
                 return false;
@@ -366,9 +396,25 @@ class DisTube extends EventEmitter {
             let q = url.parse(song);
             let qq = q.pathname.split("/").splice(1);
             if ((q.hostname === "open.spotify.com") && (qq[0] === "track" || qq[0] === "album" || qq[0] === "playlist")) {
+                let erg = null;
+                switch (qq[0]) {
+                    case "track":
+                        erg = (await spotifyApi.getTrack(qq[1])).body;
+                        break;
+                    case "album":
+                        erg = (await spotifyApi.getAlbum(qq[1])).body;
+                        break;
+                    case "playlist":
+                        erg = (await spotifyApi.getPlaylist(qq[1])).body;
+                        break;
+                    default:
+                        erg = null;
+                }
+
                 return {
                     type: qq[0],
-                    id: qq[1]
+                    id: qq[1],
+                    object: erg
                 }
             } else {
                 return false;
@@ -435,7 +481,7 @@ class DisTube extends EventEmitter {
         if (!song) return;
         try {
             let sc = await this.parseSoundcloudUrl(song);
-            let spot = this.parseSpotifyUrl(song);
+            let spot = await this.parseSpotifyUrl(song);
 
             if (sc !== false && sc.type === "track") {
                 await this._handleSong(message, await this._resolveSong(message, sc, "soundcloud_track"));
@@ -502,22 +548,14 @@ class DisTube extends EventEmitter {
      * @param {Discord.Message} message The message from guild channel
      * @param {(string|object)} arg2 Youtube playlist url
      */
-    async _handlePlaylist(message, arg2, skip = false, source = "yt", playlist_id = null) {
+    async _handlePlaylist(message, arg2, skip = false, source = "yt", list = null) {
         let playlist = null
         if (typeof arg2 == "string") {
             if (source === "soundcloud_playlist" && arg2 !== null) {
                 throw Error("SoundCloudSetsNotSupported");
                 return;
-            } else if ((source === "spotify_album" || source === "spotify_playlist") && playlist_id !== null) {
-                let erg = null;
-
-                if (source === "spotify_album") {
-                    erg = (await spotifyApi.getAlbum(playlist_id)).body;
-                } else if (source === "spotify_playlist") {
-                    erg = (await spotifyApi.getPlaylist(playlist_id)).body;
-                } else {
-                    throw Error("SpotifyInvalidUrl");
-                }
+            } else if ((source === "spotify_album" || source === "spotify_playlist") && list !== null && typeof list === "object") {
+                let erg = list.object;
 
                 if (erg != null) {
                     playlist = {
@@ -529,15 +567,29 @@ class DisTube extends EventEmitter {
                         user: message.author,
                     };
 
-                    await Parallel.each(erg.tracks.items, async elem => {
-                        let ergSong = await this._searchSong(message, `${(source === "spotify_album" ? elem.name : elem.track.name)} ${(source === "spotify_album" ? erg.artists[0].name : elem.track.artists[0].name)}`, false, 1);
-                        ergSong.title = ergSong.name;
-                        playlist.items.push(ergSong);
-                    });
+                    for (let elem of erg.tracks.items) {
+                        let song = {
+                            id: (source === "spotify_album" ? elem.id : elem.track.id),
+                            user: message.author,
+                            name: `${(source === "spotify_album" ? elem.name : elem.track.name)} - ${(source === "spotify_album" ? erg.artists[0].name : elem.track.artists[0].name)}`,
+                            duration: ((source === "spotify_album" ? (elem.duration_ms / 1000) : (elem.track.duration_ms / 1000))),
+                            formattedDuration: (source === "spotify_album" ? duration(elem.duration_ms) : duration(elem.track.duration_ms)),
+                            url: null,
+                            website_url: null,
+                            tracklist_url: null,
+                            thumbnail: null,
+                            related: null,
+                            start_time: null,
+                            type: "spotify_track"
+                        }
+
+                        song.title = song.name;
+                        playlist.items.push(song);
+                    }
 
                     playlist.duration = playlist.items.reduce((prev, next) => prev + next.duration, 0);
                     playlist.formattedDuration = formatDuration(playlist.duration * 1000);
-                    playlist.thumbnail = playlist.items[0].thumbnail;
+                    //playlist.thumbnail = playlist.items[0].thumbnail;
                 } else {
                     throw Error("SpotifyLinkNotFound");
                 }
@@ -568,10 +620,21 @@ class DisTube extends EventEmitter {
             if (skip) this.skip(message);
             else this.emit("addList", message, queue, playlist);
         } else {
-            let resolvedSong = new Song(videos.shift(), message.author);
+            let resolvedSong = null;
+
+            if (videos[0].type === "spotify_track") {
+                let s = videos.shift();
+                let search = await this._searchSong(message, s.name, false, 1);
+                search.type = "yt";
+
+                resolvedSong = search;
+            } else {
+                resolvedSong = new Song(videos.shift(), message.author);
+            }
+
             let queue = await this._newQueue(message, resolvedSong).catch((e) => this.emit("error", message, e));
             this._addVideosToQueue(message, videos);
-            this.emit("playList", message, queue, playlist, queue.songs[0]);
+            this.emit("playList", message, queue, playlist, resolvedSong);
         }
     }
 
@@ -722,10 +785,18 @@ class DisTube extends EventEmitter {
      * @param {ytdl.videoInfo[]} videos Array of song to add
      * @returns {Queue}
      */
-    _addVideosToQueue(message, videos, unshift = false) {
+    async _addVideosToQueue(message, videos, unshift = false) {
         let queue = this.getQueue(message);
         if (!queue) throw new Error("NotPlaying");
-        let songs = videos.map(v => new Song(v, message.author));
+
+        let songs = null;
+
+        if (videos[0].type === "spotify_track") {
+            songs = videos;
+        } else {
+            songs = videos.map(v => new Song(v, message.author));
+        }
+
         if (unshift) {
             let playing = queue.songs.shift();
             queue.songs.unshift(playing, ...songs);
@@ -1114,6 +1185,27 @@ class DisTube extends EventEmitter {
                     volume: queue.volume / 100
                 });
 
+            } else if (queue.songs[0].type === "spotify_track") {
+                let search = await this._searchSong(message, queue.songs[0].name, false, 1);
+                search.type = "yt";
+
+                queue.songs[0] = search;
+
+                this.guildQueues.set(message.guild.id, queue);
+
+                dispatcher = queue.connection.play(ytdl(queue.songs[0].url, {
+                    opusEncoded: true,
+                    filter: 'audioonly',
+                    quality: 'highestaudio',
+                    highWaterMark: this.options.highWaterMark,
+                    requestOptions: this.requestOptions,
+                    // encoderArgs: ['-af', filters.map(filter => ffmpegFilters[filter]).join(",")]
+                    encoderArgs,
+                }), {
+                    highWaterMark: 1,
+                    type: 'opus',
+                    volume: queue.volume / 100
+                });
             } else if (queue.songs[0].type === "stream") {
                 dispatcher = queue.connection.play(queue.songs[0].url, {
                     highWaterMark: 512,
@@ -1161,6 +1253,16 @@ class DisTube extends EventEmitter {
                     queue.skipped = false;
                     if (queue.repeatMode != 1 || queue.skipped) queue.removeFirstSong();
                     else queue.updateDuration();
+
+                    if (queue.songs[0].type === "spotify_track") {
+                        let search = await this._searchSong(message, queue.songs[0].name, false, 1);
+                        search.type = "yt";
+
+                        queue.songs[0] = search;
+
+                        this.guildQueues.set(message.guild.id, queue);
+                    }
+
                     if (this._emitPlaySong(queue) && emit) this.emit("playSong", message, queue, queue.songs[0]);
                     return this._playSong(message);
                 })
