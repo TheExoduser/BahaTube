@@ -35,6 +35,15 @@ const toSecond = (string) => {
     return h * 60 * 60 + m * 60 + s;
 };
 
+const updateSpotifyAccessToken = async () => {
+    try {
+        let data = await spotifyApi.clientCredentialsGrant();
+        spotifyApi.setAccessToken(data.body['access_token']);
+    } catch (err) {
+        console.log('Something went wrong when retrieving an access token', err.message);
+    }
+}
+
 /**
  * DisTube options.
  * @typedef {object} DisTubeOptions
@@ -149,7 +158,7 @@ class DisTube extends EventEmitter {
      * // client.DisTube = distube // make it access easily
      * client.login("Your Discord Bot Token")
      */
-    constructor(client, otp = {}) {
+    async constructor(client, otp = {}) {
         super();
         if (!client) throw new SyntaxError("Invalid Discord.Client");
 
@@ -202,13 +211,7 @@ class DisTube extends EventEmitter {
         spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
         spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
 
-        spotifyApi.clientCredentialsGrant()
-            .then(function (data) {
-                // Save the access token so that it's used in future calls
-                spotifyApi.setAccessToken(data.body['access_token']);
-            }, function (err) {
-                console.log('Something went wrong when retrieving an access token', err.message);
-            });
+        await updateSpotifyAccessToken();
     }
 
     /**
@@ -367,6 +370,8 @@ class DisTube extends EventEmitter {
             let q = song.split(":");
             if (q[1] === "track" || q[1] === "album" || q[1] === "playlist") {
                 let erg = null;
+                await updateSpotifyAccessToken();
+
                 switch (q[1]) {
                     case "track":
                         erg = (await spotifyApi.getTrack(q[2])).body;
@@ -408,6 +413,8 @@ class DisTube extends EventEmitter {
             let qq = q.pathname.split("/").splice(1);
             if ((q.hostname === "open.spotify.com") && (qq[0] === "track" || qq[0] === "album" || qq[0] === "playlist")) {
                 let erg = null;
+                await updateSpotifyAccessToken();
+
                 switch (qq[0]) {
                     case "track":
                         erg = (await spotifyApi.getTrack(qq[1])).body;
