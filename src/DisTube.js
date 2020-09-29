@@ -37,10 +37,10 @@ const toSecond = (string) => {
 
 const updateSpotifyAccessToken = async () => {
     try {
-        let data = await spotifyApi.clientCredentialsGrant();
+        let data = await spotifyApi.refreshAccessToken();
         spotifyApi.setAccessToken(data.body['access_token']);
     } catch (err) {
-        console.log('Something went wrong when retrieving an access token', err.message);
+        console.log('Something went wrong while updating the spotify access token', err.message);
     }
 }
 
@@ -211,7 +211,12 @@ class DisTube extends EventEmitter {
         spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
         spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
 
-        await updateSpotifyAccessToken();
+        try {
+            let data = await spotifyApi.clientCredentialsGrant();
+            spotifyApi.setAccessToken(data.body['access_token']);
+        } catch (err) {
+            console.log('Something went wrong while retrieving a spotify access token', err.message);
+        }
     }
 
     /**
