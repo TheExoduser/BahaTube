@@ -158,7 +158,7 @@ class DisTube extends EventEmitter {
      * // client.DisTube = distube // make it access easily
      * client.login("Your Discord Bot Token")
      */
-    async constructor(client, otp = {}) {
+    constructor(client, otp = {}) {
         super();
         if (!client) throw new SyntaxError("Invalid Discord.Client");
 
@@ -213,7 +213,7 @@ class DisTube extends EventEmitter {
 
         // Request Spotify Access Token
         try {
-            let data = await spotifyApi.clientCredentialsGrant();
+            let data = spotifyApi.clientCredentialsGrant();
             spotifyApi.setAccessToken(data.body['access_token']);
         } catch (err) {
             console.log('Something went wrong while retrieving a spotify access token', err.message);
