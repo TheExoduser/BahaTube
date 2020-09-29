@@ -38,10 +38,6 @@ const toSecond = (string) => {
 const updateSpotifyAccessToken = async () => {
     try {
         let data = await spotifyApi.clientCredentialsGrant();
-        
-        console.log('The spotify access token expires in ' + data.body['expires_in']);
-        console.log('The spotify access token is ' + data.body['access_token']);
-        
         spotifyApi.setAccessToken(data.body['access_token']);
     } catch (err) {
         console.log('Something went wrong while setting the spotify access token', err.message);
