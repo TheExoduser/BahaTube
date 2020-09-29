@@ -37,10 +37,10 @@ const toSecond = (string) => {
 
 const updateSpotifyAccessToken = async () => {
     try {
-        let data = await spotifyApi.clientCredentialsGrant();
+        let data = await spotifyApi.refreshAccessToken();
         spotifyApi.setAccessToken(data.body['access_token']);
     } catch (err) {
-        console.log('Something went wrong when retrieving an access token', err.message);
+        console.log('Something went wrong while refreshing the spotify access token', err.message);
     }
 }
 
@@ -211,7 +211,13 @@ class DisTube extends EventEmitter {
         spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
         spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
 
-        await updateSpotifyAccessToken();
+        // Request Spotify Access Token
+        try {
+            let data = await spotifyApi.clientCredentialsGrant();
+            spotifyApi.setAccessToken(data.body['access_token']);
+        } catch (err) {
+            console.log('Something went wrong when retrieving an access token', err.message);
+        }
     }
 
     /**
@@ -243,6 +249,8 @@ class DisTube extends EventEmitter {
 
             return this._searchSong(message, `${song.res.title} ${song.res.user.username}`, true, 1, "soundcloud_track", song.res.artwork_url);
         } else if (type === "spotify_track") {
+            await updateSpotifyAccessToken();
+            
             let s = (await spotifyApi.getTrack(song)).body;
             return this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1);
         } else if (!ytdl.validateURL(song))
@@ -709,7 +717,7 @@ class DisTube extends EventEmitter {
                     return;
                 }
                 song = videos[index - 1];
-            } catch {
+            } catch(e) {
                 if (emit) this.emit("searchCancel", message);
                 return;
             }
