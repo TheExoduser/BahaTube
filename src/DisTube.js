@@ -319,7 +319,7 @@ class DisTube extends EventEmitter {
                 await this._handlePlaylist(message, song, false, "spotify_album", spot);
             } else if (spot !== false && spot.type === "track") {
                 await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
-            } else if (ytpl.validateURL(song)) {
+            } else if (ytpl.validateID(song)) {
                 await this._handlePlaylist(message, song, false, "yt");
             } else {
                 await this._handleSong(message, await this._resolveSong(message, song));
@@ -523,7 +523,7 @@ class DisTube extends EventEmitter {
                 await this._handlePlaylist(message, song, true, "spotify_album", spot.id);
             } else if (spot !== false && spot.type === "track") {
                 await this._handleSong(message, await this._resolveSong(message, spot.id, "spotify_track"));
-            } else if (ytpl.validateURL(song)) {
+            } else if (ytpl.validateID(song)) {
                 await this._handlePlaylist(message, song, true, "yt");
             } else {
                 await this._handleSong(message, await this._resolveSong(message, song));

@@ -45,8 +45,8 @@
     "soundcloud-key-fetch": "^1.0.7",
     "spotify-web-api-node": "^4.0.0",
     "ytdl-core": "^3.2.1",
-    "ytpl": "^0.2.4",
-    "ytsr": "^0.1.21"
+    "ytpl": "^1.0.1",
+    "ytsr": "^1.0.3"
   },
   "devDependencies": {
     "@discordjs/opus": "^0.3.2",
