@@ -216,6 +216,14 @@ class DisTube extends EventEmitter {
     }
 
     /**
+     * Get a list of all supported filters
+     * @returns {Array}
+     */
+    getSupportedFilters() {
+        return Object.keys(ffmpegFilters);
+    }
+
+    /**
      * Resolve a Song
      * @async
      * @param {Discord.Message} message The message from guild channel
