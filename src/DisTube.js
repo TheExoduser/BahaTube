@@ -1107,7 +1107,6 @@ class DisTube extends EventEmitter {
 		}
 		let song = queue.songs[0];
 		if (!song.youtube) {
-			console.log(song);
 			// Search related
 			let search = await this._searchSong(message, queue.songs[0].name, false, 1);
 			search.type = "yt";
