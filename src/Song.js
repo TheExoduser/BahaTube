@@ -107,6 +107,12 @@ class Song {
     this.reposts = info.repost_count || 0;
 
     /**
+     * Start time of song
+     * @type {?number}
+     */
+    this.start_time = null;
+
+    /**
      * @deprecated use `Song.name` instead 
      * @type {string}
      */

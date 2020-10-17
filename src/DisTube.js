@@ -1260,6 +1260,10 @@ class DisTube extends EventEmitter {
 		}
 		try {
 			queue.stream = await this._createStream(queue, message);
+
+			queue.songs[0].start_time = moment().unix();
+			this.guildQueues.set(message.guild.id, queue);
+
 			queue.dispatcher = queue.connection.play(queue.stream, {
 				highWaterMark: 1,
 				type: 'opus',
