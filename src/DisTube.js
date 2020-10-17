@@ -623,8 +623,12 @@ class DisTube extends EventEmitter {
 				...vid,
 				id: vid.link.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7],
 			}, null, true));
-			if (videos.length === 0) {
+			if (retried > 3) {
 				throw Error("No result!");
+			}
+			if (videos.length === 0) {
+				await new Promise(r => setTimeout(r, 1000));
+				return this.search(string, ++retried);
 			}
 			return videos;
 		} catch (e) {
