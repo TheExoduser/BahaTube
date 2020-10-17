@@ -1,5 +1,7 @@
 {
-    "files": ["src/DisTube.js"],
+    "files": [
+	  "src/Distube.js"
+	],
     "exclude": [
         "node_modules"
     ],

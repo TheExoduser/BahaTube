@@ -104,5 +104,16 @@ package-lock.json
 docs
 
 .vscode
-typings/DisTube.js
+typings/Distube.js
+
+# Github
+.github/
+
+# IntelliJ
+.idea/
+
+# Syncthing
+.stignore
+.st*/
+
 .npmignore
