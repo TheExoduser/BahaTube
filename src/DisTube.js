@@ -1171,7 +1171,7 @@ class DisTube extends EventEmitter {
 		} else {
 			queue.filter = filter;
 		}
-		this._playSong(message);
+		this._playSong(message, false);
 		if (!this.options.emitNewSongOnly) {
 			this.emit("playSong", message, queue, queue.songs[0]);
 		}
@@ -1250,7 +1250,7 @@ class DisTube extends EventEmitter {
 	 * @ignore
 	 * @param {Discord.Message} message The message from guild channel
 	 */
-	async _playSong(message) {
+	async _playSong(message, emit = true) {
 		let queue = this.getQueue(message);
 		if (!queue) {
 			return;
@@ -1269,7 +1269,7 @@ class DisTube extends EventEmitter {
 				.on("error", () => {
 				});
 
-			if (this._emitPlaySong(queue)) {
+			if (this._emitPlaySong(queue) && emit) {
 				this.emit("playSong", message, queue, queue.songs[0]);
 			}
 		} catch (e) {
