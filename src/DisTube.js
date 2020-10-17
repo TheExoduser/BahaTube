@@ -260,7 +260,7 @@ class DisTube extends EventEmitter {
 			}
 			return new Song(info, message.author)
 		}
-		return await this._searchSong(message, song);
+		return this._searchSong(message, song);
 	}
 
 	/**
@@ -287,7 +287,7 @@ class DisTube extends EventEmitter {
 			}
 		} else {
 			let queue = await this._newQueue(message, song);
-			this.emit("playSong", message, queue, song);
+			//this.emit("playSong", message, queue, song);
 		}
 	}
 
@@ -324,7 +324,7 @@ class DisTube extends EventEmitter {
 				await this._handleSong(message, await this._resolveSong(message, song));
 			}
 		} catch (e) {
-			e.message = `play(${song}) encountered: ${e.message}`;
+			//e.message = `play(${song}) encountered: ${e.message}`;
 			this._emitError(message, e);
 		}
 	}
@@ -362,7 +362,7 @@ class DisTube extends EventEmitter {
 				await this._handleSong(message, await this._resolveSong(message, song), true);
 			}
 		} catch (e) {
-			e.message = `playSkip(${song}) encountered: ${e.message}`;
+			//e.message = `playSkip(${song}) encountered: ${e.message}`;
 			this._emitError(message, e);
 		}
 	}
@@ -632,7 +632,7 @@ class DisTube extends EventEmitter {
 				throw Error("No result!");
 			}
 			await new Promise(r => setTimeout(r, 1000));
-			return await this.search(string, ++retried);
+			return this.search(string, ++retried);
 		}
 	}
 
@@ -1107,6 +1107,7 @@ class DisTube extends EventEmitter {
 		}
 		let song = queue.songs[0];
 		if (!song.youtube) {
+			console.log(song);
 			// Search related
 			let search = await this._searchSong(message, queue.songs[0].name, false, 1);
 			search.type = "yt";
@@ -1296,7 +1297,7 @@ class DisTube extends EventEmitter {
 		}
 		if (queue.songs.length <= 1 && (queue.skipped || !queue.repeatMode)) {
 			if (queue.autoplay) {
-				await this.runAutoplay(message);
+				queue = await this.runAutoplay(message);
 			}
 			if (queue.songs.length <= 1) {
 				this._deleteQueue(message);
@@ -1324,7 +1325,7 @@ class DisTube extends EventEmitter {
 	 * @ignore
 	 */
 	_handlePlayingError(e, message, queue) {
-		e.message = "There is a problem while playing song!\n" + e.message;
+		e.message = "There was a problem while playing song!\n" + e.message;
 		this._emitError(message, e);
 		queue.songs.shift();
 		if (queue.songs.length > 0) {
@@ -1340,8 +1341,7 @@ class DisTube extends EventEmitter {
 	}
 }
 
-module
-	.exports = DisTube;
+module.exports = DisTube;
 
 /**
  *  Emitted after DisTube add playlist to guild queue
