@@ -628,7 +628,7 @@ class DisTube extends EventEmitter {
 			}
 			if (videos.length === 0) {
 				await new Promise(r => setTimeout(r, 1000));
-				return this.search(string, ++retried);
+				return this.search(string, ++retried, limit);
 			}
 			return videos;
 		} catch (e) {
@@ -636,7 +636,7 @@ class DisTube extends EventEmitter {
 				throw Error("No result!");
 			}
 			await new Promise(r => setTimeout(r, 1000));
-			return this.search(string, ++retried);
+			return this.search(string, ++retried, limit);
 		}
 	}
 
@@ -650,7 +650,7 @@ class DisTube extends EventEmitter {
 	 * @returns {Song} Song info
 	 */
 	async _searchSong(message, name, emit = true, limit = 12) {
-		let songs = await this.search(name, limit);
+		let songs = await this.search(name, 0, limit);
 		let song = songs[0];
 		if (this.options.searchSongs) {
 			try {
@@ -1322,7 +1322,7 @@ class DisTube extends EventEmitter {
 			queue.songs.shift();
 		}
 
-		//if (queue.stream) queue.stream.destroy();
+		if (queue.stream) queue.stream.destroy();
 		return this._playSong(message);
 	}
 
