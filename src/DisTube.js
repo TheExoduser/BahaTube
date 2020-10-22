@@ -13,7 +13,8 @@ const ytdl = require("discord-ytdl-core"),
 	moment = require("moment"),
 	spotify = require("spotify-web-api-node"),
 	url = require("url")
-	yts = require("youtube-api-v3-search");
+	yts = require("youtube-api-v3-search")
+	fetch = require("node-fetch");
 youtube_dl.getInfo = promisify(youtube_dl.getInfo);
 
 const isURL = (string) => {
@@ -636,16 +637,26 @@ class DisTube extends EventEmitter {
 
 			if (search.items) {
 				for (let item of search.items) {
-					let url = "https://www.youtube.com/watch?v=" + item.id.videoId;
+					item.url ="https://www.youtube.com/watch?v=" + item.id.videoId;
+					item.name = item.snippet.title;
+					item.title = item.name;
 
+					let req = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${item.id.videoId}&part=contentDetails&key=${DisTubeOptions.youtubeIdentityToken}`);
+					req = await req.json();
+
+					item.duration = moment.duration(req.items[0].contentDetails.duration).asSeconds();
+					item.formattedDuration = formatDuration(item.duration * 1000);
+
+					videos.push(item);
+					/*
 					if (ytdl.validateURL(url)) {
 						videos.push(new Song(await ytdl.getBasicInfo(url, {requestOptions: this.requestOptions}), message.author, true));
 					}
+					*/
 				}
 			} else {
 				throw Error("No result!");
 			}
-
 
 //			let videos = search.items.filter(val => val.type === 'video' && val.link).map(vid => new Song({
 //				...vid,
@@ -684,6 +695,8 @@ class DisTube extends EventEmitter {
 		let songs = await this.search(name, 0, limit, message);
 
 		let song = songs[0];
+		song = new Song(await ytdl.getBasicInfo(song.url, {requestOptions: this.requestOptions}), message.author, true);
+
 		if (this.options.searchSongs) {
 			try {
 				this.emit("searchResult", message, songs);
