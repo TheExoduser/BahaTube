@@ -12,7 +12,8 @@ const ytdl = require("discord-ytdl-core"),
 	{ formatDuration, toSecond } = require("./duration"),
 	moment = require("moment"),
 	spotify = require("spotify-web-api-node"),
-	url = require("url");
+	url = require("url")
+	yts = require("youtube-api-v3-search");
 youtube_dl.getInfo = promisify(youtube_dl.getInfo);
 
 const isURL = (string) => {
@@ -612,23 +613,51 @@ class DisTube extends EventEmitter {
 	 * Then use {@link DisTube#play|play(message, aResultFromSearch)} or {@link DisTube#playSkip|playSkip()} to play it.
 	 * @async
 	 * @param {string} string The string search for
+	 * @param {number} retried How often the function has been retried
+	 * @param {number} limit The max count of results to retrieve
+	 * @param {Discord.Message} message The message from guild channel
 	 * @throws {NotFound} If not found
 	 * @throws {Error} If an error encountered
 	 * @returns {Promise<Song[]>} Array of results
 	 */
-	async search(string, retried = 0, limit = 12) {
+	async search(string, retried = 0, limit = 12, message) {
 		try {
-			let search = await ytsr(string, {limit: limit});
-			let videos = search.items.filter(val => val.type === 'video' && val.link).map(vid => new Song({
-				...vid,
-				id: vid.link.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7],
-			}, null, true));
+			//let search = await ytsr(string, {limit: limit});
+
+			let opts = {
+				q: string,
+				part: "snippet",
+				type: "video",
+				maxResults: limit
+			}
+
+			let search = await yts(DisTubeOptions.youtubeIdentityToken, opts);
+			let videos = [];
+
+			if (search.items) {
+				for (let item of search.items) {
+					let url = "https://www.youtube.com/watch?v=" + item.id.videoId;
+
+					if (ytdl.validateURL(url)) {
+						videos.push(new Song(await ytdl.getBasicInfo(url, {requestOptions: this.requestOptions}), message.author, true));
+					}
+				}
+			} else {
+				throw Error("No result!");
+			}
+
+
+//			let videos = search.items.filter(val => val.type === 'video' && val.link).map(vid => new Song({
+//				...vid,
+//				id: vid.link.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7],
+//			}, null, true));
+
 			if (retried > 3) {
 				throw Error("No result!");
 			}
 			if (videos.length === 0) {
 				await new Promise(r => setTimeout(r, 1000));
-				return this.search(string, ++retried, limit);
+				return this.search(string, ++retried, limit, message);
 			}
 			return videos;
 		} catch (e) {
@@ -636,7 +665,7 @@ class DisTube extends EventEmitter {
 				throw Error("No result!");
 			}
 			await new Promise(r => setTimeout(r, 1000));
-			return this.search(string, ++retried, limit);
+			return this.search(string, ++retried, limit, message);
 		}
 	}
 
@@ -647,10 +676,13 @@ class DisTube extends EventEmitter {
 	 * @ignore
 	 * @param {Discord.Message} message The message from guild channel
 	 * @param {string} name The string search for
+	 * @param {boolean} emit Should this function emit any events
+	 * @param {number} limit The string search for
 	 * @returns {Song} Song info
 	 */
 	async _searchSong(message, name, emit = true, limit = 12) {
-		let songs = await this.search(name, 0, limit);
+		let songs = await this.search(name, 0, limit, message);
+
 		let song = songs[0];
 		if (this.options.searchSongs) {
 			try {
