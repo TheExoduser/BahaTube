@@ -6,7 +6,7 @@ const ytdl = require("discord-ytdl-core"),
 	Song = require("./Song"),
 	Playlist = require("./Playlist"),
 	Discord = require("discord.js"),
-	youtube_dl = require('youtube-dl'),
+	//youtube_dl = require('youtube-dl'),
 	{promisify} = require('util'),
 	youtube_dlOptions = ["--no-warnings", "--force-ipv4"],
 	{ formatDuration, toSecond } = require("./duration"),
@@ -15,7 +15,7 @@ const ytdl = require("discord-ytdl-core"),
 	url = require("url")
 	yts = require("youtube-api-v3-search")
 	fetch = require("node-fetch");
-youtube_dl.getInfo = promisify(youtube_dl.getInfo);
+//youtube_dl.getInfo = promisify(youtube_dl.getInfo);
 
 const isURL = (string) => {
 	try {
@@ -205,13 +205,14 @@ class DisTube extends EventEmitter {
 			}
 		})
 
+		/*
 		require('youtube-dl/lib/downloader')((err, done) => {
 			if (err) {
 				console.error(err);
 			}
 			console.log("DisTube: " + done);
 		})
-
+		 */
 		spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
 		spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
 
@@ -253,6 +254,7 @@ class DisTube extends EventEmitter {
 		if (ytdl.validateURL(song)) {
 			return new Song(await ytdl.getBasicInfo(song, {requestOptions: this.requestOptions}), message.author, true);
 		}
+		/*
 		if (isURL(song)) {
 			let info = await youtube_dl.getInfo(song, youtube_dlOptions).catch(e => {
 				throw new Error(e.stderr)
@@ -262,6 +264,7 @@ class DisTube extends EventEmitter {
 			}
 			return new Song(info, message.author)
 		}
+		 */
 		return this._searchSong(message, song, true, 1);
 	}
 

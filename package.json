@@ -43,7 +43,6 @@
   "dependencies": {
     "discord-ytdl-core": "github:skick1234/discord-ytdl-core",
     "moment": "^2.29.1",
-    "youtube-dl": "git+https://gitlab+deploy-token-1:ZezNNSNUh51VsBKB9b1g@hub.theexoduser.de/gitlab/TheExoduser/youtube-dl.git#master",
     "ytdl-core": "^3.4.1",
     "ytpl": "^1.0.1",
     "ytsr": "https://github.com/TimeForANinja/node-ytsr.git#wip-api-adjustments",
