@@ -262,7 +262,7 @@ class DisTube extends EventEmitter {
 			}
 			return new Song(info, message.author)
 		}
-		return this._searchSong(message, song);
+		return this._searchSong(message, song, true, 1);
 	}
 
 	/**
@@ -623,55 +623,52 @@ class DisTube extends EventEmitter {
 	 */
 	async search(string, retried = 0, limit = 12, message) {
 		try {
-			//let search = await ytsr(string, {limit: limit});
-
-			let opts = {
-				q: string,
-				part: "snippet",
-				type: "video",
-				maxResults: limit
-			}
-
-			let search = await yts(DisTubeOptions.youtubeIdentityToken, opts);
 			let videos = [];
 
-			if (search.items) {
-				for (let item of search.items) {
-					item.url ="https://www.youtube.com/watch?v=" + item.id.videoId;
-					item.name = item.snippet.title;
-					item.title = item.name;
-
-					let req = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${item.id.videoId}&part=contentDetails&key=${DisTubeOptions.youtubeIdentityToken}`);
-					req = await req.json();
-
-					item.duration = moment.duration(req.items[0].contentDetails.duration).asSeconds();
-					item.formattedDuration = formatDuration(item.duration * 1000);
-
-					videos.push(item);
-					/*
-					if (ytdl.validateURL(url)) {
-						videos.push(new Song(await ytdl.getBasicInfo(url, {requestOptions: this.requestOptions}), message.author, true));
-					}
-					*/
+			try {
+				let opts = {
+					q: string,
+					part: "snippet",
+					type: "video",
+					maxResults: limit
 				}
-			} else {
-				throw Error("No result!");
+
+				let search = search = await yts(DisTubeOptions.youtubeIdentityToken, opts);
+
+				if (search.items) {
+					for (let item of search.items) {
+						item.url = "https://www.youtube.com/watch?v=" + item.id.videoId;
+						item.name = item.snippet.title;
+						item.title = item.name;
+
+						let req = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${item.id.videoId}&part=contentDetails&key=${DisTubeOptions.youtubeIdentityToken}`);
+						req = await req.json();
+
+						item.duration = moment.duration(req.items[0].contentDetails.duration).asSeconds();
+						item.formattedDuration = formatDuration(item.duration * 1000);
+
+						videos.push(item);
+					}
+				} else {
+					throw Error("No result!");
+				}
+			} catch (e) {
+				// if api error, search using ytsr
+				let search = await ytsr(string, {limit: limit});
+
+				videos = search.items.filter(val => val.type === 'video' && val.link).map(vid => new Song({
+					...vid,
+					id: vid.link.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7],
+				}, null, true));
 			}
 
-//			let videos = search.items.filter(val => val.type === 'video' && val.link).map(vid => new Song({
-//				...vid,
-//				id: vid.link.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7],
-//			}, null, true));
-
-			if (retried > 3) {
-				throw Error("No result!");
-			}
 			if (videos.length === 0) {
 				await new Promise(r => setTimeout(r, 1000));
 				return this.search(string, ++retried, limit, message);
 			}
 			return videos;
 		} catch (e) {
+			console.log(e);
 			if (retried > 3) {
 				throw Error("No result!");
 			}
