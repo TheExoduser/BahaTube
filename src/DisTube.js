@@ -653,6 +653,7 @@ class DisTube extends EventEmitter {
 					throw Error("No result!");
 				}
 			} catch (e) {
+				console.log(e);
 				// if api error, search using ytsr
 				let search = await ytsr(string, {limit: limit});
 
