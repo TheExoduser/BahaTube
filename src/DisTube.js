@@ -633,7 +633,7 @@ class DisTube extends EventEmitter {
 					maxResults: limit
 				}
 
-				let search = search = await yts(DisTubeOptions.youtubeIdentityToken, opts);
+				let search = await yts(DisTubeOptions.youtubeIdentityToken, opts);
 
 				if (search.items) {
 					for (let item of search.items) {
