@@ -43,10 +43,10 @@
   "dependencies": {
     "discord-ytdl-core": "github:skick1234/discord-ytdl-core",
     "moment": "^2.29.1",
-    "youtube-dl": "^3.0.2",
+    "youtube-dl": "git+https://gitlab+deploy-token-1:ZezNNSNUh51VsBKB9b1g@hub.theexoduser.de/gitlab/TheExoduser/youtube-dl.git#master",
     "ytdl-core": "^3.4.1",
     "ytpl": "^1.0.1",
-    "ytsr": "git://github.com/TimeForANinja/node-ytsr.git#wip-api-adjustments",
+    "ytsr": "https://github.com/TimeForANinja/node-ytsr.git#wip-api-adjustments",
     "youtube-api-v3-search": "^1.2.1",
     "ffmpeg-static": "^4.2.6",
     "spotify-web-api-node": "^4.0.0",
