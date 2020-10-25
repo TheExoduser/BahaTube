@@ -591,7 +591,7 @@ class DisTube extends EventEmitter {
 	 * @throws {Error} If an error encountered
 	 * @returns {Promise<Song[]>} Array of results
 	 */
-	async search(string, retried = 0, limit = 12, message) {
+	async search(string, retried = 0, limit = 12) {
 		try {
 			let videos = [];
 
@@ -633,7 +633,7 @@ class DisTube extends EventEmitter {
 
 			if (videos.length === 0) {
 				await new Promise(r => setTimeout(r, 1000));
-				return this.search(string, ++retried, limit, message);
+				return this.search(string, ++retried, limit);
 			}
 			return videos;
 		} catch (e) {
@@ -1179,7 +1179,7 @@ class DisTube extends EventEmitter {
     if (!queue) return;
     if (!queue.songs.length) return this._deleteQueue(message);
     try {
-      queue.stream = await this._createStream(queue);
+      queue.stream = await this._createStream(queue, message);
 
       queue.songs[0].start_time = moment().unix();
       this.guildQueues.set(message.guild.id, queue);
