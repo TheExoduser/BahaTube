@@ -1103,7 +1103,7 @@ class DisTube extends EventEmitter {
     if (!Object.prototype.hasOwnProperty.call(ffmpegFilters, filter)) throw TypeError(filter + " is not a Filter (https://DisTube.js.org/global.html#Filter).");
     if (queue.filter == filter) queue.filter = null;
     else queue.filter = filter;
-    this._playSong(message);
+    this._playSong(message, false);
     if (!this.options.emitNewSongOnly) this.emit("playSong", message, queue, queue.songs[0]);
     return queue.filter;
   }
@@ -1174,7 +1174,7 @@ class DisTube extends EventEmitter {
    * @ignore
    * @param {Discord.Message} message The message from guild channel
    */
-  async _playSong(message) {
+  async _playSong(message, emit = true) {
     let queue = this.getQueue(message);
     if (!queue) return;
     if (!queue.songs.length) return this._deleteQueue(message);
