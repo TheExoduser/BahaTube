@@ -1,29 +1,30 @@
-const ytdl = require("discord-ytdl-core"),
-	ytsr = require("ytsr"),
-	ytpl = require("ytpl"),
-	{EventEmitter} = require("events"),
-	Queue = require("./Queue"),
-	Song = require("./Song"),
-	Playlist = require("./Playlist"),
-	Discord = require("discord.js"),
-	//youtube_dl = require('youtube-dl'),
-	{promisify} = require('util'),
-	youtube_dlOptions = ["--no-warnings", "--force-ipv4"],
-	{ formatDuration, toSecond } = require("./duration"),
-	moment = require("moment"),
-	spotify = require("spotify-web-api-node"),
-	url = require("url")
-	yts = require("youtube-api-v3-search")
-	fetch = require("node-fetch");
-//youtube_dl.getInfo = promisify(youtube_dl.getInfo);
+const ytdl = require("@skick/discord-ytdl-core"),
+    ytsr = require("ytsr"),
+    ytpl = require("ytpl"),
+    {EventEmitter} = require("events"),
+    Queue = require("./Queue"),
+    Song = require("./Song"),
+    Playlist = require("./Playlist"),
+    Discord = require("discord.js"),
+    youtube_dl = require('youtube-dl'),
+    path = require('path'),
+    fs = require('fs'),
+    {promisify} = require('util'),
+    youtube_dlOptions = ["--no-warnings", "--force-ipv4"],
+    { formatDuration, toSecond } = require("./duration"),
+    moment = require("moment"),
+    spotify = require("spotify-web-api-node"),
+    url = require("url"),
+    yts = require("youtube-api-v3-search"),
+    fetch = require("node-fetch");
+youtube_dl.getInfo = promisify(youtube_dl.getInfo);
+const binPath = path.join(__dirname, "../youtube-dl/youtube-dl" + (process.platform === 'win32' || process.env.NODE_PLATFORM === 'windows' ? ".exe" : ""));
+fs.chmodSync(binPath, '777');
+youtube_dl.setYtdlBinary(binPath);
 
 const isURL = (string) => {
-	try {
-		new URL(string)
-	} catch {
-		return false
-	}
-	return true;
+  try { new URL(string) } catch { return false }
+  return true;
 }
 
 const updateSpotifyAccessToken = async () => {
@@ -65,16 +66,16 @@ const DisTubeOptions = {
  * @typedef {string} Filter
  * @prop {string} 3d `@2.0.0`
  * @prop {string} bassboost `@2.0.0`
- * @prop {string} echo `@2.0.0`
+ * @prop {string} echo `@2.0.0` 
  * @prop {string} flanger `@2.4.0`
  * @prop {string} gate `@2.4.0`
  * @prop {string} haas `@2.4.0`
- * @prop {string} karaoke `@2.0.0`
+ * @prop {string} karaoke `@2.0.0` 
  * @prop {string} nightcore `@2.0.0`
  * @prop {string} reverse `@2.4.0`
  * @prop {string} vaporwave `@2.0.0`
  */
-/*
+
 const ffmpegFilters = {
   "3d": "apulsator=hz=0.125",
   bassboost: 'dynaudnorm=f=150:g=15,equalizer=f=40:width_type=h:width=50:g=10',
@@ -87,7 +88,8 @@ const ffmpegFilters = {
   reverse: 'areverse',
   vaporwave: "asetrate=48000*0.8,aresample=48000,atempo=1.1",
 }
-*/
+
+/*
 const ffmpegFilters = {
 	"3d": "apulsator=hz=0.125",
 	'8D': 'apulsator=hz=0.08',
@@ -110,7 +112,7 @@ const ffmpegFilters = {
 	vaporwave: 'aresample=48000,asetrate=48000*0.8',
 	vibrato: 'vibrato=f=6.5',
 }
-
+*/
 const spotifyApi = new spotify();
 
 /**
@@ -118,155 +120,120 @@ const spotifyApi = new spotify();
  * @extends EventEmitter
  */
 class DisTube extends EventEmitter {
-	/**
-	 * DisTube's current version.
-	 * @type {string}
-	 * @ignore
-	 */
-	get version() {
-		return require("../package.json").version
-	}
+  /**
+   * DisTube's current version.
+   * @type {string}
+   * @ignore
+   */
+  get version() { return require("../package.json").version }
+  static get version() { return require("../package.json").version }
+  /**
+   * Create new DisTube.
+   * @param {Discord.Client} client Discord.JS client
+   * @param {DisTubeOptions} [otp={}] Custom DisTube options
+   * @example
+   * const Discord = require('discord.js'),
+   *     DisTube = require('distube'),
+   *     client = new Discord.Client();
+   * // Create a new DisTube
+   * const distube = new DisTube(client, { searchSongs: true });
+   * // client.DisTube = distube // make it access easily
+   * client.login("Your Discord Bot Token")
+   */
+  constructor(client, otp = {}) {
+    super();
+    if (!client) throw new SyntaxError("Invalid Discord.Client");
 
-	static get version() {
-		return require("../package.json").version
-	}
+    /**
+     * Discord.JS client
+     * @type {Discord.Client}
+     */
+    this.client = client;
 
-	/**
-	 * Create new DisTube.
-	 * @param {Discord.Client} client Discord.JS client
-	 * @param {DisTubeOptions} [otp={}] Custom DisTube options
-	 * @example
-	 * const Discord = require('discord.js'),
-	 *     DisTube = require('distube'),
-	 *     client = new Discord.Client();
-	 * // Create a new DisTube
-	 * const distube = new DisTube(client, { searchSongs: true });
-	 * // client.DisTube = distube // make it access easily
-	 * client.login("Your Discord Bot Token")
-	 */
-	constructor(client, otp = {}) {
-		super();
-		if (!client) {
-			throw new SyntaxError("Invalid Discord.Client");
-		}
+    /**
+     * Collection of guild queues
+     * @type {Discord.Collection<string, Queue>}
+     */
+    this.guildQueues = new Discord.Collection();
 
-		/**
-		 * Discord.JS client
-		 * @type {Discord.Client}
-		 */
-		this.client = client;
+    /**
+     * DisTube options
+     * @type {DisTubeOptions}
+     */
+    this.options = DisTubeOptions;
+    for (let key in otp)
+      this.options[key] = otp[key];
 
-		/**
-		 * Collection of guild queues
-		 * @type {Discord.Collection<string, Queue>}
-		 */
-		this.guildQueues = new Discord.Collection();
+    this.requestOptions = this.options.youtubeCookie ? { headers: { cookie: this.options.youtubeCookie, 'x-youtube-identity-token': this.options.youtubeIdentityToken } } : undefined;
 
-		/**
-		 * DisTube options
-		 * @type {DisTubeOptions}
-		 */
-		this.options = DisTubeOptions;
-		for (let key in otp)
-			this.options[key] = otp[key];
+    client.on("voiceStateUpdate", (oldState, newState) => {
+      if (newState && newState.id == client.user.id && !newState.channelID) {
+        let queue = this.guildQueues.find((gQueue) => gQueue.connection && gQueue.connection.channel.id == oldState.channelID);
+        if (!queue) return;
+        let guildID = queue.connection.channel.guild.id;
+        try { this.stop(guildID) } catch { this._deleteQueue(guildID) }
+      }
+      if (this.options.leaveOnEmpty && oldState && oldState.channel) {
+        let queue = this.guildQueues.find((gQueue) => gQueue.connection && gQueue.connection.channel.id == oldState.channelID);
+        if (queue && this._isVoiceChannelEmpty(queue)) {
+          setTimeout((queue) => {
+            let guildID = queue.connection.channel.guild.id;
+            if (this.guildQueues.has(guildID) && this._isVoiceChannelEmpty(queue)) {
+              queue.connection.channel.leave();
+              this.emit("empty", queue.initMessage);
+              this._deleteQueue(queue.initMessage);
+            }
+          }, 60000, queue)
+        }
+      }
+    })
 
-		this.requestOptions = this.options.youtubeCookie ? {
-			headers: {
-				cookie: this.options.youtubeCookie,
-				'x-youtube-identity-token': this.options.youtubeIdentityToken
-			}
-		} : undefined;
+    spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
+    spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
 
-		client.on("voiceStateUpdate", (oldState, newState) => {
-			if (newState && newState.id == client.user.id && !newState.channelID) {
-				let queue = this.guildQueues.find((gQueue) => gQueue.connection && gQueue.connection.channel.id == oldState.channelID);
-				if (!queue) {
-					return;
-				}
-				let guildID = queue.connection.channel.guild.id;
-				try {
-					this.stop(guildID)
-				} catch {
-					this._deleteQueue(guildID)
-				}
-			}
-			if (this.options.leaveOnEmpty && oldState && oldState.channel) {
-				let queue = this.guildQueues.find((gQueue) => gQueue.connection && gQueue.connection.channel.id == oldState.channelID);
-				if (queue && this._isVoiceChannelEmpty(queue)) {
-					setTimeout((queue) => {
-						let guildID = queue.connection.channel.guild.id;
-						if (this.guildQueues.has(guildID) && this._isVoiceChannelEmpty(queue)) {
-							queue.connection.channel.leave();
-							this.emit("empty", queue.initMessage);
-							this._deleteQueue(queue.initMessage);
-						}
-					}, 60000, queue)
-				}
-			}
-		})
+    // Request Spotify Access Token
+    updateSpotifyAccessToken();
+  }
 
-		/*
-		require('youtube-dl/lib/downloader')((err, done) => {
-			if (err) {
-				console.error(err);
-			}
-			console.log("DisTube: " + done);
-		})
-		 */
-		spotifyApi.setClientId(DisTubeOptions.spotifyClientId);
-		spotifyApi.setClientSecret(DisTubeOptions.spotifyClientSecret);
+  /**
+   * Get a list of all supported filters
+   * @returns {Array}
+   */
+  getSupportedFilters() {
+    return Object.keys(ffmpegFilters);
+  }
 
-		// Request Spotify Access Token
-		updateSpotifyAccessToken();
-	}
+  /**
+   * Resolve a Song
+   * @async
+   * @param {Discord.Message} message The message from guild channel
+   * @param {string|Song} song Youtube url | Search string | {@link Song}
+   * @private
+   * @ignore
+   * @returns {Promise<Song|Song[]>} Resolved Song
+   */
+  async _resolveSong(message, song, type = "yt") {
+    if (song instanceof Song) {
+      song.user = message.author;
+      return song;
+    }
+    if (typeof song === "object")
+      return new Song(song, message.author)
+    if (type === "spotify_track") {
+      await updateSpotifyAccessToken();
 
-	/**
-	 * Get a list of all supported filters
-	 * @returns {Array}
-	 */
-	getSupportedFilters() {
-		return Object.keys(ffmpegFilters);
-	}
-
-	/**
-	 * Resolve a Song
-	 * @async
-	 * @param {Discord.Message} message The message from guild channel
-	 * @param {string|Song} song Youtube url | Search string | {@link Song}
-	 * @private
-	 * @ignore
-	 * @returns {Promise<Song|Song[]>} Resolved Song
-	 */
-	async _resolveSong(message, song, type = "yt") {
-		if (song instanceof Song) {
-			song.user = message.author;
-			return song;
-		}
-		if (typeof song === "object") {
-			return new Song(song, message.author)
-		}
-		if (type === "spotify_track") {
-			await updateSpotifyAccessToken();
-
-			let s = (await spotifyApi.getTrack(song)).body;
-			return this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1);
-		}
-		if (ytdl.validateURL(song)) {
-			return new Song(await ytdl.getBasicInfo(song, {requestOptions: this.requestOptions}), message.author, true);
-		}
-		/*
-		if (isURL(song)) {
-			let info = await youtube_dl.getInfo(song, youtube_dlOptions).catch(e => {
-				throw new Error(e.stderr)
-			})
-			if (Array.isArray(info) && info.length > 0) {
-				return info.map(i => new Song(i, message.author));
-			}
-			return new Song(info, message.author)
-		}
-		 */
-		return this._searchSong(message, song, true, 1);
-	}
+      let s = (await spotifyApi.getTrack(song)).body;
+      return this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1);
+    }
+    if (ytdl.validateURL(song))
+      return new Song(await ytdl.getBasicInfo(song, { requestOptions: this.requestOptions }), message.author, true);
+    if (isURL(song)) {
+      let info = await youtube_dl.getInfo(song, youtube_dlOptions).catch(e => { throw new Error(e.stderr) })
+      if (Array.isArray(info) && info.length > 0) return info.map(i => new Song(i, message.author));
+      return new Song(info, message.author)
+    }
+    return await this._searchSong(message, song, true, 1);
+  }
 
 	/**
 	 * Handle a Song or an array of Song
@@ -724,674 +691,554 @@ class DisTube extends EventEmitter {
 		return song;
 	}
 
-	/**
-	 * Create a new guild queue
-	 * @async
-	 * @private
-	 * @ignore
-	 * @param {Discord.Message} message The message from guild channel
-	 * @param {Song} song Song to play
-	 * @throws {NotInVoice} if user not in a voice channel
-	 * @returns {Promise<Queue>}
-	 */
-	async _newQueue(message, song) {
-		let voice = message.member.voice.channel;
-		if (!voice) {
-			throw new Error("User is not in the voice channel.");
-		}
-		let queue = new Queue(message);
-		this.emit("initQueue", queue);
-		this.guildQueues.set(message.guild.id, queue);
-		queue.connection = await voice.join().catch(err => {
-			this._deleteQueue(message);
-			throw Error("DisTube cannot join the voice channel: " + err);
-		});
-		if (!queue.connection) {
-			return;
-		}
-		queue.connection.on("error", e => {
-			e.message = "There is a problem with Discord Voice Connection.\nPlease try again! Sorry for the interruption!\nReason: " + e.message;
-			this._emitError(message, e);
-			this._deleteQueue(message);
-		})
-		queue.songs.push(song);
-		this._playSong(message);
-		return queue;
-	}
+  /**
+   * Create a new guild queue
+   * @async
+   * @private
+   * @ignore
+   * @param {Discord.Message} message The message from guild channel
+   * @param {Song} song Song to play
+   * @throws {NotInVoice} if user not in a voice channel
+   * @returns {Promise<Queue>}
+   */
+  async _newQueue(message, song) {
+    let voice = message.member.voice.channel;
+    if (!voice) throw new Error("User is not in the voice channel.");
+    let queue = new Queue(message);
+    this.emit("initQueue", queue);
+    this.guildQueues.set(message.guild.id, queue);
+    queue.connection = await voice.join().catch(err => {
+      this._deleteQueue(message);
+      throw Error("DisTube cannot join the voice channel: " + err);
+    });
+    if (!queue.connection) return;
+    queue.connection.on("error", e => {
+      e.message = "There is a problem with Discord Voice Connection.\nPlease try again! Sorry for the interruption!\nReason: " + e.message;
+      this._emitError(message, e);
+      this._deleteQueue(message);
+    })
+    queue.songs.push(song);
+    this._playSong(message);
+    return queue;
+  }
 
-	/**
-	 * Delete a guild queue
-	 * @private
-	 * @ignore
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 */
-	_deleteQueue(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			return;
-		}
-		if (queue.dispatcher) {
-			try {
-				queue.dispatcher.destroy()
-			} catch {
-			}
-		}
-		if (queue.stream) {
-			try {
-				queue.stream.destroy()
-			} catch {
-			}
-		}
-		if (typeof message === "string") {
-			this.guildQueues.delete(message);
-		} else if (message && message.guild) {
-			this.guildQueues.delete(message.guild.id);
-		}
-	}
+  /**
+   * Delete a guild queue
+   * @private
+   * @ignore
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   */
+  _deleteQueue(message) {
+    let queue = this.getQueue(message);
+    if (!queue) return;
+    if (queue.dispatcher) try { queue.dispatcher.destroy() } catch { }
+    if (queue.stream) try { queue.stream.destroy() } catch { }
+    if (typeof message === "string") this.guildQueues.delete(message);
+    else if (message && message.guild) this.guildQueues.delete(message.guild.id);
+  }
 
-	/**
-	 * Get the guild queue
-	 * @param {Discord.Snowflake|Discord.Message} message The guild ID or message from guild channel.
-	 * @returns {Queue} The guild queue
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "queue") {
-	 *         let queue = distube.getQueue(message);
-	 *         message.channel.send('Current queue:\n' + queue.songs.map((song, id) =>
-	 *             `**${id+1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``
-	 *         ).join("\n"));
-	 *     }
-	 * });
-	 */
-	getQueue(message) {
-		if (typeof message === "string") {
-			return this.guildQueues.get(message);
-		}
-		if (!message || !message.guild) {
-			throw TypeError("Parameter should be Discord.Message or server ID!");
-		}
-		return this.guildQueues.get(message.guild.id);
-	}
+  /**
+   * Get the guild queue
+   * @param {Discord.Snowflake|Discord.Message} message The guild ID or message from guild channel.
+   * @returns {Queue} The guild queue
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "queue") {
+   *         let queue = distube.getQueue(message);
+   *         message.channel.send('Current queue:\n' + queue.songs.map((song, id) =>
+   *             `**${id+1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``
+   *         ).join("\n"));
+   *     }
+   * });
+   */
+  getQueue(message) {
+    if (typeof message === "string") return this.guildQueues.get(message);
+    if (!message || !message.guild) throw TypeError("Parameter should be Discord.Message or server ID!");
+    return this.guildQueues.get(message.guild.id);
+  }
 
-	/**
-	 * Add a video to queue
-	 * @private
-	 * @ignore
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @param {Song} song Song to add
-	 * @throws {NotInVoice} if result is empty
-	 * @returns {Queue}
-	 */
-	_addToQueue(message, song, unshift = false) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			return;
-		}
-		if (!song) {
-			throw new Error("NoSong");
-		}
-		if (unshift) {
-			let playing = queue.songs.shift();
-			queue.songs.unshift(playing, song);
-		} else {
-			queue.songs.push(song);
-		}
-		return queue;
-	}
+  /**
+   * Add a video to queue
+   * @private
+   * @ignore
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @param {Song} song Song to add
+   * @throws {NotInVoice} if result is empty
+   * @returns {Queue}
+   */
+  _addToQueue(message, song, unshift = false) {
+    let queue = this.getQueue(message);
+    if (!queue) return;
+    if (!song) throw new Error("NoSong");
+    if (unshift) {
+      let playing = queue.songs.shift();
+      queue.songs.unshift(playing, song);
+    } else queue.songs.push(song);
+    return queue;
+  }
 
-	/**
-	 * Add a array of videos to queue
-	 * @private
-	 * @ignore
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @param {Song[]} songs Array of song to add
-	 * @returns {Queue}
-	 */
-	_addSongsToQueue(message, songs, unshift = false) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			return;
-		}
-		if (!songs.length) {
-			throw new Error("NoSong");
-		}
-		if (unshift) {
-			let playing = queue.songs.shift();
-			queue.songs.unshift(playing, ...songs);
-		} else {
-			queue.songs.push(...songs);
-		}
-		return queue;
-	}
+  /**
+   * Add a array of videos to queue
+   * @private
+   * @ignore
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @param {Song[]} songs Array of song to add
+   * @returns {Queue}
+   */
+  _addSongsToQueue(message, songs, unshift = false) {
+    let queue = this.getQueue(message);
+    if (!queue) return;
+    if (!songs.length) throw new Error("NoSong");
+    if (unshift) {
+      let playing = queue.songs.shift();
+      queue.songs.unshift(playing, ...songs);
+    } else queue.songs.push(...songs);
+    return queue;
+  }
 
-	/**
-	 * Pause the guild stream
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @returns {Queue} The guild queue
-	 * @throws {NotPlaying} No playing queue
-	 */
-	pause(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		queue.playing = false;
-		queue.pause = true;
-		queue.dispatcher.pause();
-		return queue;
-	}
+  /**
+   * Pause the guild stream
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @returns {Queue} The guild queue
+   * @throws {NotPlaying} No playing queue
+   */
+  pause(message) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    queue.playing = false;
+    queue.pause = true;
+    queue.dispatcher.pause();
+    return queue;
+  }
 
-	/**
-	 * Resume the guild stream
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @returns {Queue} The guild queue
-	 * @throws {NotPlaying} No playing queue
-	 */
-	resume(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		queue.playing = true;
-		queue.pause = false;
-		queue.dispatcher.resume();
-		return queue;
-	}
+  /**
+   * Resume the guild stream
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @returns {Queue} The guild queue
+   * @throws {NotPlaying} No playing queue
+   */
+  resume(message) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    queue.playing = true;
+    queue.pause = false;
+    queue.dispatcher.resume();
+    return queue;
+  }
 
-	/**
-	 * Stop the guild stream
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @throws {NotPlaying} No playing queue
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "stop") {
-	 *         distube.stop(message);
-	 *         message.channel.send("Stopped the queue!");
-	 *     }
-	 * });
-	 */
-	stop(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		queue.stopped = true;
-		if (queue.dispatcher) {
-			try {
-				queue.dispatcher.end()
-			} catch {
-			}
-		}
-		if (this.options.leaveOnStop && queue.connection) {
-			try {
-				queue.connection.channel.leave()
-			} catch {
-			}
-		}
-		this._deleteQueue(message);
-	}
+  /**
+   * Stop the guild stream
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @throws {NotPlaying} No playing queue
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "stop") {
+   *         distube.stop(message);
+   *         message.channel.send("Stopped the queue!");
+   *     }
+   * });
+   */
+  stop(message) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    queue.stopped = true;
+    if (queue.dispatcher) try { queue.dispatcher.end() } catch { }
+    if (this.options.leaveOnStop && queue.connection)
+      try { queue.connection.channel.leave() } catch { }
+    this._deleteQueue(message);
+  }
 
-	/**
-	 * Set the guild stream's volume
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @param {number} percent The percentage of volume you want to set
-	 * @returns {Queue} The guild queue
-	 * @throws {NotPlaying} No playing queue
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "volume")
-	 *         distube.setVolume(message, args[0]);
-	 * });
-	 */
-	setVolume(message, percent) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		queue.volume = percent;
-		queue.dispatcher.setVolume(queue.volume / 100);
-		return queue
-	}
+  /**
+   * Set the guild stream's volume
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @param {number} percent The percentage of volume you want to set
+   * @returns {Queue} The guild queue
+   * @throws {NotPlaying} No playing queue
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "volume")
+   *         distube.setVolume(message, args[0]);
+   * });
+   */
+  setVolume(message, percent) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    queue.volume = percent;
+    queue.dispatcher.setVolume(queue.volume / 100);
+    return queue
+  }
 
-	/**
-	 * Skip the playing song
-	 *
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @returns {Queue} The guild queue
-	 * @throws {NotPlaying} No playing queue
-	 * @throws {NoSong} if there is no song in queue
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "skip")
-	 *         distube.skip(message);
-	 * });
-	 */
-	skip(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		if (queue.songs <= 1 && !queue.autoplay) {
-			throw new Error("NoSong");
-		}
-		queue.skipped = true;
-		queue.dispatcher.end();
-		return queue;
-	}
+  /**
+   * Skip the playing song
+   * 
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @returns {Queue} The guild queue
+   * @throws {NotPlaying} No playing queue
+   * @throws {NoSong} if there is no song in queue
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "skip")
+   *         distube.skip(message);
+   * });
+   */
+  skip(message) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    if (queue.songs <= 1 && !queue.autoplay) throw new Error("NoSong");
+    queue.skipped = true;
+    queue.dispatcher.end();
+    return queue;
+  }
 
-	/**
-	 * Shuffle the guild queue songs
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @returns {Queue} The guild queue
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "shuffle")
-	 *         distube.shuffle(message);
-	 * });
-	 */
-	shuffle(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		let playing = queue.songs.shift();
-		for (let i = queue.songs.length - 1; i > 0; i--) {
-			let j = Math.floor(Math.random() * (i + 1));
-			[queue.songs[i], queue.songs[j]] = [queue.songs[j], queue.songs[i]];
-		}
-		queue.songs.unshift(playing);
-		return queue;
-	}
+  /**
+   * Shuffle the guild queue songs
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @returns {Queue} The guild queue
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "shuffle")
+   *         distube.shuffle(message);
+   * });
+   */
+  shuffle(message) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    let playing = queue.songs.shift();
+    for (let i = queue.songs.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [queue.songs[i], queue.songs[j]] = [queue.songs[j], queue.songs[i]];
+    }
+    queue.songs.unshift(playing);
+    return queue;
+  }
 
-	/**
-	 * Jump to the song number in the queue.
-	 * The next one is 1,...
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @param {number} num The song number to play
-	 * @returns {Queue} The guild queue
-	 * @throws {InvalidSong} if `num` is invalid number (0 < num < {@link Queue#songs}.length)
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "jump")
-	 *         distube.jump(message, parseInt(args[0]))
-	 *             .catch(err => message.channel.send("Invalid song number."));
-	 * });
-	 */
-	jump(message, num) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		if (num > queue.songs.length || num < 1) {
-			throw new Error("InvalidSong");
-		}
-		queue.songs = queue.songs.splice(num - 1);
-		queue.skipped = true;
-		queue.dispatcher.end();
-		return queue;
-	}
+  /**
+   * Jump to the song number in the queue.
+   * The next one is 1,...
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @param {number} num The song number to play
+   * @returns {Queue} The guild queue
+   * @throws {InvalidSong} if `num` is invalid number (0 < num < {@link Queue#songs}.length)
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "jump")
+   *         distube.jump(message, parseInt(args[0]))
+   *             .catch(err => message.channel.send("Invalid song number."));
+   * });
+   */
+  jump(message, num) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    if (num > queue.songs.length || num < 1) throw new Error("InvalidSong");
+    queue.songs = queue.songs.splice(num - 1);
+    queue.skipped = true;
+    queue.dispatcher.end();
+    return queue;
+  }
 
-	/**
-	 * Set the repeat mode of the guild queue.
-	 * Turn off if repeat mode is the same value as new mode.
-	 * Toggle mode: `mode = null` `(0 -> 1 -> 2 -> 0...)`
-	 *
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @param {number} mode The repeat modes `(0: disabled, 1: Repeat a song, 2: Repeat all the queue)`
-	 * @returns {number} The new repeat mode
-	 *
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "repeat") {
-	 *         let mode = distube.setRepeatMode(message, parseInt(args[0]));
-	 *         mode = mode ? mode == 2 ? "Repeat queue" : "Repeat song" : "Off";
-	 *         message.channel.send("Set repeat mode to `" + mode + "`");
-	 *     }
-	 * });
-	 */
-	setRepeatMode(message, mode = null) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		mode = parseInt(mode, 10);
-		if (!mode && mode !== 0) {
-			queue.repeatMode = (queue.repeatMode + 1) % 3;
-		} else if (queue.repeatMode === mode) {
-			queue.repeatMode = 0;
-		} else {
-			queue.repeatMode = mode;
-		}
-		return queue.repeatMode;
-	}
+  /**
+   * Set the repeat mode of the guild queue.
+   * Turn off if repeat mode is the same value as new mode.
+   * Toggle mode: `mode = null` `(0 -> 1 -> 2 -> 0...)`
+   * 
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @param {number} mode The repeat modes `(0: disabled, 1: Repeat a song, 2: Repeat all the queue)`
+   * @returns {number} The new repeat mode
+   * 
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "repeat") {
+   *         let mode = distube.setRepeatMode(message, parseInt(args[0]));
+   *         mode = mode ? mode == 2 ? "Repeat queue" : "Repeat song" : "Off";
+   *         message.channel.send("Set repeat mode to `" + mode + "`");
+   *     }
+   * });
+   */
+  setRepeatMode(message, mode = null) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    mode = parseInt(mode, 10);
+    if (!mode && mode !== 0) queue.repeatMode = (queue.repeatMode + 1) % 3;
+    else if (queue.repeatMode === mode) queue.repeatMode = 0;
+    else queue.repeatMode = mode;
+    return queue.repeatMode;
+  }
 
-	/**
-	 * Toggle autoplay mode
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @returns {boolean} Autoplay mode state
-	 * @throws {NotPlaying} No playing queue
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if (command == "autoplay") {
-	 *         let mode = distube.toggleAutoplay(message);
-	 *         message.channel.send("Set autoplay mode to `" + (mode ? "On" : "Off") + "`");
-	 *     }
-	 * });
-	 */
-	toggleAutoplay(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		queue.autoplay = !queue.autoplay;
-		return queue.autoplay;
-	}
+  /**
+   * Toggle autoplay mode
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @returns {boolean} Autoplay mode state
+   * @throws {NotPlaying} No playing queue
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if (command == "autoplay") {
+   *         let mode = distube.toggleAutoplay(message);
+   *         message.channel.send("Set autoplay mode to `" + (mode ? "On" : "Off") + "`");
+   *     }
+   * });
+   */
+  toggleAutoplay(message) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    queue.autoplay = !queue.autoplay;
+    return queue.autoplay;
+  }
 
-	/**
-	 * Whether or not a guild is playing music.
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel to check
-	 * @returns {boolean} Whether or not the guild is playing song(s)
-	 */
-	isPlaying(message) {
-		let queue = this.getQueue(message);
-		return queue ? (queue.playing || !queue.pause) : false;
-	}
+  /**
+   * Whether or not a guild is playing music.
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel to check
+   * @returns {boolean} Whether or not the guild is playing song(s)
+   */
+  isPlaying(message) {
+    let queue = this.getQueue(message);
+    return queue ? (queue.playing || !queue.pause) : false;
+  }
 
-	/**
-	 * Whether or not the guild queue is paused
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel to check
-	 * @returns {boolean} Whether or not the guild queue is paused
-	 */
-	isPaused(message) {
-		let queue = this.getQueue(message);
-		return queue ? queue.pause : false;
-	}
+  /**
+   * Whether or not the guild queue is paused
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel to check
+   * @returns {boolean} Whether or not the guild queue is paused
+   */
+  isPaused(message) {
+    let queue = this.getQueue(message);
+    return queue ? queue.pause : false;
+  }
 
-	/**
-	 * Whether or not the queue's voice channel is empty
-	 * @private
-	 * @ignore
-	 * @param {Queue} queue The guild queue
-	 * @returns {boolean} No user in voice channel return `true`
-	 */
-	_isVoiceChannelEmpty(queue) {
-		let voiceChannel = queue.connection.channel;
-		let members = voiceChannel.members.filter(m => !m.user.bot);
-		return !members.size;
-	}
+  /**
+   * Whether or not the queue's voice channel is empty
+   * @private
+   * @ignore
+   * @param {Queue} queue The guild queue
+   * @returns {boolean} No user in voice channel return `true`
+   */
+  _isVoiceChannelEmpty(queue) {
+    let voiceChannel = queue.connection.channel;
+    let members = voiceChannel.members.filter(m => !m.user.bot);
+    return !members.size;
+  }
 
-	/**
-	 * Add related song to the queue
-	 * @async
-	 * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
-	 * @returns {Promise<Queue>} The guild queue
-	 */
-	async runAutoplay(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		let song = queue.songs[0];
-		if (!song.youtube) {
-			// Search related
-			let search = await this._searchSong(message, queue.songs[0].name, false, 1);
-			search.type = "yt";
+  /**
+   * Add related song to the queue
+   * @async
+   * @param {Discord.Snowflake|Discord.Message} message The message from guild channel
+   * @returns {Promise<Queue>} The guild queue
+   */
+  async runAutoplay(message) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    let song = queue.songs[0];
+    if (!song.youtube) {
+      // Search related
+      let search = await this._searchSong(message, queue.songs[0].name, false, 1);
+      search.type = "yt";
 
-			queue.songs[0] = search;
-			song = search;
+      queue.songs[0] = search;
+      song = search;
 
-			this.guildQueues.set(message.guild.id, queue);
-			/*
-			this.emit("noRelated", message);
-			return queue;
-			 */
-		}
-		let related = song.related;
-		if (!related) {
-			related = await ytdl.getBasicInfo(song.url, {requestOptions: this.requestOptions});
-			related = related.related_videos;
-		}
-		related = related.filter(v => v.length_seconds != 'undefined')
-		if (related && related[0]) {
-			try {
-				this._addToQueue(message, new Song(await ytdl.getBasicInfo(related[0].id, {requestOptions: this.requestOptions}), this.client.user, true));
-			} catch {
-				this.emit("noRelated", message)
-			}
-		} else {
-			this.emit("noRelated", message);
-		}
+      this.guildQueues.set(message.guild.id, queue);
+      /*
+	  this.emit("noRelated", message);
+	  return queue;
+	   */
+    }
+    let related = song.related;
+    if (!related) {
+      related = await ytdl.getBasicInfo(song.url, { requestOptions: this.requestOptions });
+      related = related.related_videos;
+    }
+    related = related.filter(v => v.length_seconds != 'undefined')
+    if (related && related[0])
+      try {
+        this._addToQueue(message, new Song(await ytdl.getBasicInfo(related[0].id, { requestOptions: this.requestOptions }), this.client.user, true));
+      } catch { this.emit("noRelated", message) }
+    else
+      this.emit("noRelated", message);
 
-		return queue;
-	}
+    return queue;
+  }
 
-	/**
-	 * `@2.0.0` Enable or disable a filter of the queue, replay the playing song.
-	 * Available filters: {@link Filter}
-	 *
-	 * @param {Discord.Message} message The message from guild channel
-	 * @param {Filter} filter A filter name
-	 * @returns {string} Current queue's filter name.
-	 * @example
-	 * client.on('message', (message) => {
-	 *     if (!message.content.startsWith(config.prefix)) return;
-	 *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	 *     const command = args.shift();
-	 *     if ([`3d`, `bassboost`, `echo`, `karaoke`, `nightcore`, `vaporwave`].includes(command)) {
-	 *         let filter = distube.setFilter(message, command);
-	 *         message.channel.send("Current queue filter: " + (filter || "Off"));
-	 *     }
-	 * });
-	 */
-	setFilter(message, filter) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			throw new Error("NotPlaying");
-		}
-		if (!Object.prototype.hasOwnProperty.call(ffmpegFilters, filter)) {
-			throw TypeError(filter + " is not a Filter (https://DisTube.js.org/global.html#Filter).");
-		}
-		if (queue.filter == filter) {
-			queue.filter = null;
-		} else {
-			queue.filter = filter;
-		}
-		this._playSong(message, false);
-		if (!this.options.emitNewSongOnly) {
-			this.emit("playSong", message, queue, queue.songs[0]);
-		}
-		return queue.filter;
-	}
+  /**
+   * `@2.0.0` Enable or disable a filter of the queue, replay the playing song.
+   * Available filters: {@link Filter}
+   * 
+   * @param {Discord.Message} message The message from guild channel
+   * @param {Filter} filter A filter name
+   * @returns {string} Current queue's filter name.
+   * @example
+   * client.on('message', (message) => {
+   *     if (!message.content.startsWith(config.prefix)) return;
+   *     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+   *     const command = args.shift();
+   *     if ([`3d`, `bassboost`, `echo`, `karaoke`, `nightcore`, `vaporwave`].includes(command)) {
+   *         let filter = distube.setFilter(message, command);
+   *         message.channel.send("Current queue filter: " + (filter || "Off"));
+   *     }
+   * });
+   */
+  setFilter(message, filter) {
+    let queue = this.getQueue(message);
+    if (!queue) throw new Error("NotPlaying");
+    if (!Object.prototype.hasOwnProperty.call(ffmpegFilters, filter)) throw TypeError(filter + " is not a Filter (https://DisTube.js.org/global.html#Filter).");
+    if (queue.filter == filter) queue.filter = null;
+    else queue.filter = filter;
+    this._playSong(message);
+    if (!this.options.emitNewSongOnly) this.emit("playSong", message, queue, queue.songs[0]);
+    return queue.filter;
+  }
 
-	/**
-	 * Emit error event
-	 * @private
-	 * @ignore
-	 */
-	_emitError(message, error) {
-		if (this.listeners("error").length) {
-			this.emit("error", message, error);
-		} else {
-			this.emit("error", error);
-		}
-	}
+  /**
+   * Emit error event
+   * @private
+   * @ignore
+   */
+  _emitError(message, error) {
+    if (this.listeners("error").length)
+      this.emit("error", message, error);
+    else
+      this.emit("error", error);
+  }
 
-	/**
-	 * Whether or not emit playSong event
-	 * @private
-	 * @ignore
-	 */
-	_emitPlaySong(queue) {
-		if (
-			!this.options.emitNewSongOnly ||
-			(
-				queue.repeatMode !== 1 &&
-				(!queue.songs[1] || queue.songs[0].id !== queue.songs[1].id)
-			)
-		) {
-			return true;
-		}
-		return false;
-	}
+  /**
+   * Whether or not emit playSong event
+   * @private
+   * @ignore
+   */
+  _emitPlaySong(queue) {
+    if (
+      !this.options.emitNewSongOnly ||
+      (
+        queue.repeatMode !== 1 &&
+        (!queue.songs[1] || queue.songs[0].id !== queue.songs[1].id)
+      )
+    ) return true;
+    return false;
+  }
 
-	/**
-	 * Create a ytdl stream
-	 * @private
-	 * @ignore
-	 */
-	async _createStream(queue, message) {
-		try {
-			let song = queue.songs[0]
-			if (song.type === "spotify_track") {
-				let search = await this._searchSong(message, queue.songs[0].name, false, 1);
-				queue.songs[0] = search;
-				song = search;
+  /**
+   * Create a ytdl stream
+   * @private
+   * @ignore
+   */
+  async _createStream(queue) {
+    let song = queue.songs[0];
+    if (song.type === "spotify_track") {
+      let search = await this._searchSong(message, song.name, false, 1);
+      queue.songs[0] = search;
+      song = search;
 
-				this.guildQueues.set(message.guild.id, queue);
-			}
+      this.guildQueues.set(message.guild.id, queue);
+    }
 
-			let encoderArgs = queue.filter ? ["-af", ffmpegFilters[queue.filter]] : null;
-			let streamOptions = {
-				opusEncoded: true,
-				filter: (song.isLive ? "audioandvideo" : "audioonly"),
-				quality: "highestaudio",
-				highWaterMark: this.options.highWaterMark,
-				requestOptions: this.requestOptions,
-				encoderArgs,
-			};
+    let encoderArgs = queue.filter ? ["-af", ffmpegFilters[queue.filter]] : null;
+    let streamOptions = {
+      opusEncoded: true,
+      filter: (song.isLive ? "audioandvideo" : "audioonly"),
+      quality: "highestaudio",
+      highWaterMark: this.options.highWaterMark,
+      requestOptions: this.requestOptions,
+      encoderArgs,
+    };
+    if (song.youtube) return ytdl(song.url, streamOptions);
+    return ytdl.arbitraryStream(song.streamURL, streamOptions);
+  }
 
-			if (song.youtube) {
-				return ytdl(song.url, streamOptions);
-			}
-			return ytdl.arbitraryStream(song.streamURL, streamOptions);
-		} catch (e) {
-			this._handlePlayingError(e, message, queue);
-		}
-	}
+  /**
+   * Play a song on voice connection
+   * @private
+   * @ignore
+   * @param {Discord.Message} message The message from guild channel
+   */
+  _playSong(message) {
+    let queue = this.getQueue(message);
+    if (!queue) return;
+    if (!queue.songs.length) return this._deleteQueue(message);
+    try {
+      queue.stream = this._createStream(queue).on("error", e => this._handlePlayingError(e, message, queue));
 
-	/**
-	 * Play a song on voice connection
-	 * @private
-	 * @ignore
-	 * @param {Discord.Message} message The message from guild channel
-	 */
-	async _playSong(message, emit = true) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			return;
-		}
-		if (!queue.songs.length) {
-			return this._deleteQueue(message);
-		}
-		try {
-			queue.stream = await this._createStream(queue, message);
+      queue.songs[0].start_time = moment().unix();
+      this.guildQueues.set(message.guild.id, queue);
 
-			queue.songs[0].start_time = moment().unix();
-			this.guildQueues.set(message.guild.id, queue);
+      queue.dispatcher = queue.connection.play(queue.stream, {
+        highWaterMark: 1,
+        type: 'opus',
+        volume: queue.volume / 100,
+        bitrate: 'auto'
+      }).on("finish", () => this._handleSongFinish(message, queue))
+        .on("error", () => { });
+    } catch (e) {
+      e.message = `Cannot play \`${queue.songs[0].id}\`: \`${e.message}\``;
+      this._emitError(message, e);
+    }
+  }
 
-			queue.dispatcher = queue.connection.play(queue.stream, {
-				highWaterMark: 1,
-				type: 'opus',
-				volume: queue.volume / 100,
-				bitrate: 'auto'
-			}).on("finish", () => this._handleSongFinish(message, queue))
-				.on("error", () => {
-				});
+  /**
+   * Handle the queue when a Song finish
+   * @private
+   * @ignore
+   */
+  async _handleSongFinish(message, queue) {
+    if (queue.stopped) return;
+    if (this.options.leaveOnEmpty && this._isVoiceChannelEmpty(queue)) {
+      this._deleteQueue(message);
+      queue.connection.channel.leave();
+      return this.emit("empty", message);
+    }
+    if (queue.repeatMode === 2 && !queue.skipped) queue.songs.push(queue.songs[0]);
+    if (queue.songs.length <= 1 && (queue.skipped || !queue.repeatMode)) {
+      if (queue.autoplay) await this.runAutoplay(message);
+      if (queue.songs.length <= 1) {
+        this._deleteQueue(message);
+        if (this.options.leaveOnFinish && !queue.stopped)
+          queue.connection.channel.leave();
+        if (!queue.autoplay) this.emit("finish", message);
+        return;
+      }
+    }
+    queue.skipped = false;
+    if (queue.repeatMode !== 1 || queue.skipped) queue.songs.shift();
+    if (this._emitPlaySong(queue)) this.emit("playSong", message, queue, queue.songs[0]);
+    if (queue.stream) queue.stream.destroy();
+    return this._playSong(message);
+  }
 
-			if (this._emitPlaySong(queue) && emit) {
-				this.emit("playSong", message, queue, queue.songs[0]);
-			}
-		} catch (e) {
-			e.message = `Cannot play \`${queue.songs[0].id}\`: \`${e.message}\``;
-			this._emitError(message, e);
-		}
-	}
-
-	/**
-	 * Handle the queue when a Song finish
-	 * @private
-	 * @ignore
-	 */
-	async _handleSongFinish(message, queue) {
-		if (queue.stopped) {
-			return;
-		}
-		if (this.options.leaveOnEmpty && this._isVoiceChannelEmpty(queue)) {
-			this._deleteQueue(message);
-			queue.connection.channel.leave();
-			return this.emit("empty", message);
-		}
-		if (queue.repeatMode === 2 && !queue.skipped) {
-			queue.songs.push(queue.songs[0]);
-		}
-		if (queue.songs.length <= 1 && (queue.skipped || !queue.repeatMode)) {
-			if (queue.autoplay) {
-				queue = await this.runAutoplay(message);
-			}
-			if (queue.songs.length <= 1) {
-				this._deleteQueue(message);
-				if (this.options.leaveOnFinish && !queue.stopped) {
-					queue.connection.channel.leave();
-				}
-				if (!queue.autoplay) {
-					this.emit("finish", message);
-				}
-				return;
-			}
-		}
-		queue.skipped = false;
-		if (queue.repeatMode !== 1 || queue.skipped) {
-			queue.songs.shift();
-		}
-
-		if (queue.stream) queue.stream.destroy();
-		return this._playSong(message);
-	}
-
-	/**
-	 * Handle error while playing Song
-	 * @private
-	 * @ignore
-	 */
-	_handlePlayingError(e, message, queue) {
-		e.message = "There was a problem while playing song!\n" + e.message;
-		this._emitError(message, e);
-		queue.songs.shift();
-		if (queue.songs.length > 0) {
-			this.emit("playSong", message, queue, queue.songs[0]);
-			this._playSong(message);
-		} else {
-			try {
-				this.stop(message)
-			} catch {
-				this._deleteQueue(message)
-			}
-		}
-	}
+  /**
+   * Handle error while playing Song
+   * @private
+   * @ignore
+   */
+  _handlePlayingError(e, message, queue) {
+    e.message = "There is a problem while playing song!\n" + e.message;
+    this._emitError(message, e);
+    queue.songs.shift();
+    if (queue.songs.length > 0) {
+      this.emit("playSong", message, queue, queue.songs[0]);
+      this._playSong(message);
+    } else try { this.stop(message) } catch { this._deleteQueue(message) }
+  }
 }
 
 module.exports = DisTube;
