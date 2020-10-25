@@ -1141,7 +1141,7 @@ class DisTube extends EventEmitter {
    * @private
    * @ignore
    */
-  async _createStream(queue) {
+  async _createStream(queue, message) {
   	try {
 		let song = queue.songs[0];
 		if (song.type === "spotify_track") {
