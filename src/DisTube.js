@@ -259,7 +259,7 @@ class DisTube extends EventEmitter {
 			}
 		} else {
 			let queue = await this._newQueue(message, song);
-			this.emit("playSong", message, queue, song);
+			//this.emit("playSong", message, queue, song);
 		}
 	}
 
@@ -1191,6 +1191,10 @@ class DisTube extends EventEmitter {
         bitrate: 'auto'
       }).on("finish", () => this._handleSongFinish(message, queue))
         .on("error", () => { });
+
+		if (this._emitPlaySong(queue) && emit) {
+			this.emit("playSong", message, queue, queue.songs[0]);
+		}
     } catch (e) {
       e.message = `Cannot play \`${queue.songs[0].id}\`: \`${e.message}\``;
       this._emitError(message, e);
@@ -1222,7 +1226,7 @@ class DisTube extends EventEmitter {
     }
     queue.skipped = false;
     if (queue.repeatMode !== 1 || queue.skipped) queue.songs.shift();
-    if (this._emitPlaySong(queue)) this.emit("playSong", message, queue, queue.songs[0]);
+    //if (this._emitPlaySong(queue)) this.emit("playSong", message, queue, queue.songs[0]);
     if (queue.stream) queue.stream.destroy();
     return this._playSong(message);
   }
