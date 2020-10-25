@@ -259,7 +259,7 @@ class DisTube extends EventEmitter {
 			}
 		} else {
 			let queue = await this._newQueue(message, song);
-			//this.emit("playSong", message, queue, song);
+			this.emit("playSong", message, queue, song);
 		}
 	}
 
@@ -605,7 +605,7 @@ class DisTube extends EventEmitter {
 
 				let search = await yts(DisTubeOptions.youtubeIdentityToken, opts);
 
-				if (search.items) {
+				if (!search.error && search.items) {
 					for (let item of search.items) {
 						item.url = "https://www.youtube.com/watch?v=" + item.id.videoId;
 						item.name = item.snippet.title;
@@ -623,10 +623,8 @@ class DisTube extends EventEmitter {
 					throw Error("No result!");
 				}
 			} catch (e) {
-				console.log(e);
 				// if api error, search using ytsr
 				let search = await ytsr(string, {limit: limit});
-
 				videos = search.items.filter(val => val.type === 'video' && val.link).map(vid => new Song({
 					...vid,
 					id: vid.link.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7],
@@ -1144,26 +1142,30 @@ class DisTube extends EventEmitter {
    * @ignore
    */
   async _createStream(queue) {
-    let song = queue.songs[0];
-    if (song.type === "spotify_track") {
-      let search = await this._searchSong(message, song.name, false, 1);
-      queue.songs[0] = search;
-      song = search;
+  	try {
+		let song = queue.songs[0];
+		if (song.type === "spotify_track") {
+			let search = await this._searchSong(message, song.name, false, 1);
+			queue.songs[0] = search;
+			song = search;
 
-      this.guildQueues.set(message.guild.id, queue);
-    }
+			this.guildQueues.set(message.guild.id, queue);
+		}
 
-    let encoderArgs = queue.filter ? ["-af", ffmpegFilters[queue.filter]] : null;
-    let streamOptions = {
-      opusEncoded: true,
-      filter: (song.isLive ? "audioandvideo" : "audioonly"),
-      quality: "highestaudio",
-      highWaterMark: this.options.highWaterMark,
-      requestOptions: this.requestOptions,
-      encoderArgs,
-    };
-    if (song.youtube) return ytdl(song.url, streamOptions);
-    return ytdl.arbitraryStream(song.streamURL, streamOptions);
+		let encoderArgs = queue.filter ? ["-af", ffmpegFilters[queue.filter]] : null;
+		let streamOptions = {
+			opusEncoded: true,
+			filter: (song.isLive ? "audioandvideo" : "audioonly"),
+			quality: "highestaudio",
+			highWaterMark: this.options.highWaterMark,
+			requestOptions: this.requestOptions,
+			encoderArgs,
+		};
+		if (song.youtube) return ytdl(song.url, streamOptions);
+		return ytdl.arbitraryStream(song.streamURL, streamOptions);
+	} catch (e) {
+		this._handlePlayingError(e, message, queue);
+	}
   }
 
   /**
@@ -1172,12 +1174,12 @@ class DisTube extends EventEmitter {
    * @ignore
    * @param {Discord.Message} message The message from guild channel
    */
-  _playSong(message) {
+  async _playSong(message) {
     let queue = this.getQueue(message);
     if (!queue) return;
     if (!queue.songs.length) return this._deleteQueue(message);
     try {
-      queue.stream = this._createStream(queue).on("error", e => this._handlePlayingError(e, message, queue));
+      queue.stream = await this._createStream(queue);
 
       queue.songs[0].start_time = moment().unix();
       this.guildQueues.set(message.guild.id, queue);
