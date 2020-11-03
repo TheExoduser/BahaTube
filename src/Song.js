@@ -117,6 +117,21 @@ class Song {
      */
     this.reposts = parseNumber(info.repost_count || 0);
     /**
+     * Webstream website url
+     * @type {string}
+     */
+    this.website_url = null;
+    /**
+     * Webstream tracklist url
+     * @type {string}
+     */
+    this.tracklist_url = null;
+    /**
+     * Type of song
+     * @type {string}
+     */
+    this.type = "yt";
+    /**
      * @deprecated use `Song.name` instead
      * @type {string}
      */
