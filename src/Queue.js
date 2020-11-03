@@ -63,7 +63,7 @@ class Queue {
     /**
      * `@2.0.0` Queue audio filter.
      * Available filters: {@link Filter}
-     * @type {string}
+     * @type {Filter}
      */
     this.filter = null;
     /**
@@ -76,8 +76,12 @@ class Queue {
      * @type {Readable}
      */
     this.stream = null;
+    /**
+     * `@2.7.0` What time in the song to begin (in milliseconds).
+     * @type {number}
+     */
+    this.beginTime = 0;
   }
-
   /**
    * Formatted duration string.
    * @type {string}
@@ -87,10 +91,17 @@ class Queue {
   }
   /**
    * Queue's duration.
-   * @type {Number}
+   * @type {number}
    */
   get duration() {
     return this.songs.reduce((prev, next) => prev + next.duration, 0)
+  }
+  /**
+   * `@2.7.0` What time in the song is playing (in milliseconds).
+   * @type {number}
+   */
+  get currentTime() {
+    return this.dispatcher.streamTime + this.beginTime;
   }
 }
 

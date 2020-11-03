@@ -1,5 +1,6 @@
 export = Queue;
 import Discord from "discord.js";
+import DisTube from "./DisTube";
 /**
  * Represents a queue.
  */
@@ -61,9 +62,9 @@ declare class Queue {
     /**
      * `@2.0.0` Queue audio filter.
      * Available filters: {@link Filter}
-     * @type {string}
+     * @type {DisTube.Filter}
      */
-    filter: string;
+    filter: DisTube.Filter;
     /**
      * `@2.2.0` Message which initialize the queue
      * @type {Discord.Message}
@@ -75,13 +76,23 @@ declare class Queue {
      */
     stream: any;
     /**
+     * `@2.7.0` What time in the song to begin (in milliseconds).
+     * @type {number}
+     */
+    beginTime: number;
+    /**
      * Formatted duration string.
      * @type {string}
      */
     get formattedDuration(): string;
     /**
      * Queue's duration.
-     * @type {Number}
+     * @type {number}
      */
     get duration(): number;
+    /**
+     * `@2.7.0` What time in the song is playing (in milliseconds).
+     * @type {number}
+     */
+    get currentTime(): number
 }

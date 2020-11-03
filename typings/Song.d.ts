@@ -1,17 +1,18 @@
 export = Song;
 import Discord from "discord.js";
-import ytdl from "ytdl-core"
+import ytdl from "ytdl-core";
 /** Class representing a song. */
 declare class Song {
     /**
      * Create a song.
-     * @param {ytdl.videoInfo|object} info Video info
+     * @param {ytdl.videoInfo|Object} info Video info
      * @param {Discord.User} user Requested user
      * @param {boolean} [youtube=false] Weather or not the video is a Youtube video.
      */
-    constructor(info: ytdl.videoInfo | object, user: Discord.User, youtube?: boolean);
+    constructor(info: ytdl.videoInfo | any, user: Discord.User, youtube?: boolean);
+    info: ytdl.videoInfo;
     /**
-     * `@2.6.0`
+     * `@2.6.0` Weather or not the video is a Youtube video.
      * @type {boolean}
      */
     youtube: boolean;
@@ -36,7 +37,7 @@ declare class Song {
      */
     duration: number;
     /**
-     * Formatted duration string `hh:mm:ss`.
+     * Formatted duration string `hh:mm:ss` or `mm:ss`.
      * @type {string}
      */
     formattedDuration: string;
@@ -46,10 +47,10 @@ declare class Song {
      */
     url: string;
     /**
-     * `@2.6.0` Stream / Download URL. (Not available with YouTube video)
+     * `@2.6.0` Stream / Download URL.
      * @type {?string}
      */
-    streamURL: any;
+    streamURL: string | null;
     /**
      * Song thumbnail.
      * @type {string}
@@ -66,25 +67,30 @@ declare class Song {
      */
     isLive: boolean;
     /**
-     * `@2.6.0` Song play count
-     * @type {?number}
+     * `@2.6.0` Song views count
+     * @type {number}
      */
-    plays: number | null;
+    views: number;
+    /**
+     * @deprecated use `Song.views` instead
+     * @type {number}
+     */
+    plays: number;
     /**
      * `@2.6.0` Song like count
-     * @type {?number}
+     * @type {number}
      */
-    likes: number | null;
+    likes: number;
     /**
      * `@2.6.0` Song dislike count
-     * @type {?number}
+     * @type {number}
      */
-    dislikes: number | null;
+    dislikes: number;
     /**
      * `@2.6.0` Song repost count
-     * @type {?number}
+     * @type {number}
      */
-    reposts: number | null;
+    reposts: number;
     /**
      * @deprecated use `Song.name` instead
      * @type {string}

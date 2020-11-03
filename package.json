@@ -1,6 +1,6 @@
 {
   "name": "distube",
-  "version": "2.6.8",
+  "version": "2.7.0",
   "description": "A Discord.js v12 module to easily manage music commands and play Youtube song on Discord without any API key.",
   "main": "src/DisTube.js",
   "typings": "typings/DisTube.d.ts",
@@ -31,7 +31,7 @@
     "music-bot",
     "discord-js"
   ],
-  "author": "skick1234",
+  "author": "Skick (https://github.com/skick1234/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/skick1234/distube/issues"
@@ -41,25 +41,28 @@
   },
   "homepage": "https://distube.js.org/",
   "dependencies": {
-    "@skick/discord-ytdl-core": "^4.1.0",
+    "@distube/youtube-dl": "^1.0.0",
+    "@distube/ytdl": "^1.0.2",
+    "@distube/ytsr": "^1.0.0",
     "moment": "^2.29.1",
-    "youtube-dl": "github:skick1234/node-youtube-dl",
-    "ytdl-core": "^3.4.2",
     "ytpl": "^1.0.1",
-    "ytsr": "github:skick1234/node-ytsr",
     "youtube-api-v3-search": "^1.2.1",
     "ffmpeg-static": "^4.2.6",
     "spotify-web-api-node": "^4.0.0",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@discordjs/opus": "^0.3.2",
-    "@types/node": "^14.11.9",
-    "@types/youtube-dl": "^1.12.2",
-    "clean-jsdoc-theme": "^2.2.11",
-    "discord.js": "^12.3.1",
+    "@discordjs/opus": "^0.3.3",
+    "@types/node": "^14.14.6",
+    "@types/youtube-dl": "^3.0.0",
+    "clean-jsdoc-theme": "^2.2.12",
+    "discord.js": "^12.4.1",
     "discord.js-docgen": "github:skick1234/docgen",
     "jsdoc": "^3.6.6",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.5"
+  },
+  "engines": {
+    "discord.js": "^12.0.0",
+    "node": ">=12"
   }
 }
