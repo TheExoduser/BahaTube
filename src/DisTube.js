@@ -256,7 +256,7 @@ class DisTube extends EventEmitter {
     if (ytdl.validateURL(song)) return new Song(await ytdl.getInfo(song, { requestOptions: this.requestOptions }), message.author, true);
     if (isURL(song)) {
       if (!this.options.youtubeDL) throw new Error("Not Supported URL!");
-      let info = await youtube_dl.getInfo(song, youtube_dlOptions).catch(e => { throw new Error(`[youtube-dl] ${e.stderr}`) });
+      let info = await youtube_dl.getInfo(song, youtube_dlOptions).catch(e => { throw new Error(`[youtube-dl] ${e.stderr || e}`) });
       if (Array.isArray(info) && info.length > 0) return info.map(i => new Song(i, message.author));
       return new Song(info, message.author);
     }
@@ -676,14 +676,14 @@ class DisTube extends EventEmitter {
   async _newQueue(message, song, retried = false) {
     let voice = message.member.voice.channel;
     if (!voice) throw new Error("User is not in the voice channel.");
-    let queue = new Queue(message);
+    let queue = new Queue(message, song);
     this.emit("initQueue", queue);
     this.guildQueues.set(message.guild.id, queue);
     try {
       queue.connection = await voice.join();
     } catch (e) {
       this._deleteQueue(message);
-      e.message = `DisTube cannot join the voice channel!\n${e.message}`;
+      e.message = `DisTube cannot join the voice channel!\nReason: ${e.message}`;
       if (retried) throw e;
       return this._newQueue(message, song, true);
     }
@@ -692,7 +692,6 @@ class DisTube extends EventEmitter {
       this._emitError(message, e);
       this._deleteQueue(message);
     })
-    queue.songs.push(song);
     await this._playSong(message);
     return queue;
   }
@@ -1044,7 +1043,7 @@ class DisTube extends EventEmitter {
     }
     let related = song.related;
     if (!related) related = (await ytdl.getBasicInfo(song.url, { requestOptions: this.requestOptions })).related_videos;
-    if (related && related[0]) this._addToQueue(message, new Song(await ytdl.getInfo(related[0].id), this.client.user, true));
+    if (related && related[0]) this._addToQueue(message, new Song(await ytdl.getInfo(related[0].id, { requestOptions: this.requestOptions }), this.client.user, true));
     else this.emit("noRelated", message);
     return queue;
   }
@@ -1146,71 +1145,63 @@ class DisTube extends EventEmitter {
     return ytdl.arbitraryStream(song.streamURL, streamOptions);
   }
 
-	/**
-	 * Play a song on voice connection
-	 * @private
-	 * @ignore
-	 * @param {Discord.Message} message The message from guild channel
-	 */
-	async _playSong(message) {
-		let queue = this.getQueue(message);
-		if (!queue) {
-			return;
-		}
-		if (!queue.songs.length) {
-			this._deleteQueue(message);
-			return;
-		}
-		let song = queue.songs[0];
-		try {
-			let errorEmitted = false;
+  /**
+   * Play a song on voice connection
+   * @private
+   * @ignore
+   * @param {Discord.Message} message The message from guild channel
+   */
+  async _playSong(message) {
+    let queue = this.getQueue(message);
+    if (!queue) return;
+    if (!queue.songs.length) {
+      this._deleteQueue(message);
+      return;
+    }
+    let song = queue.songs[0];
+    try {
+      let errorEmitted = false;
 
-			if (song.type === "spotify_track") {
-				let search = await this._resolveSong(message, await this._searchSong(message, song.name, false, 1));
-				queue.songs[0] = search;
-				song = search;
-				this.guildQueues.set(message.guild.id, queue);
-			}
-
-			// Queue.stream.on('info') should works but maybe DisTube#playSong will emit before ytdl#info
-			if (song.youtube && !song.info) {
-				let {videoDetails} = song.info = await ytdl.getInfo(song.url, {requestOptions: this.requestOptions});
-				song.views = Number(videoDetails.viewCount);
-				song.likes = videoDetails.likes;
-				song.dislikes = videoDetails.dislikes;
-				song.streamURL = ytdl.chooseFormat(song.info.formats, {
-					filter: song.isLive ? "audioandvideo" : "audioonly",
-					quality: "highestaudio",
-				}).url;
-			}
-			let stream = this._createStream(queue).on("error", e => {
-				errorEmitted = true;
-				e.message = `There is a problem while playing song!\nID: ${song.id}\nName: ${song.name}\n${e.message}`;
-				this._emitError(message, e);
-			});
-			queue.dispatcher = queue.connection.play(stream, {
-				highWaterMark: 1,
-				type: "opus",
-				volume: queue.volume / 100,
-				bitrate: "auto",
-			}).on("finish", () => this._handleSongFinish(message, queue))
-				.on("error", e => {
-					if (!errorEmitted) {
-						e.message = `There is a problem while playing song!\nID: ${song.id}\nName: ${song.name}\n${e.message}`;
-						this._emitError(message, e);
-					}
-					this._handlePlayingError(message, queue);
-				});
-			if (queue.stream) {
-				queue.stream.destroy();
-			}
-			queue.stream = stream;
-		} catch (e) {
-			e.message = `Cannot play song!\nID: ${song.id}\nName: ${song.name}\n${e.message}`;
-			this._emitError(message, e);
-			this._handlePlayingError(message, queue);
+		if (song.type === "spotify_track") {
+			let search = await this._resolveSong(message, await this._searchSong(message, song.name, false, 1));
+			queue.songs[0] = search;
+			song = search;
+			this.guildQueues.set(message.guild.id, queue);
 		}
-	}
+
+      // Queue.stream.on('info') should works but maybe DisTube#playSong will emit before ytdl#info
+      if (song.youtube && !song.info) {
+        let { videoDetails } = song.info = await ytdl.getInfo(song.url, { requestOptions: this.requestOptions });
+        song.views = Number(videoDetails.viewCount);
+        song.likes = videoDetails.likes;
+        song.dislikes = videoDetails.dislikes;
+        if (song.info.formats.length) {
+          song.streamURL = ytdl.chooseFormat(song.info.formats, {
+            filter: song.isLive ? "audioandvideo" : "audioonly",
+            quality: "highestaudio",
+          }).url;
+        }
+      }
+      let stream = this._createStream(queue).on("error", e => {
+        errorEmitted = true;
+        e.message = `${e.message}\nID: ${song.id}\nName: ${song.name}`;
+        this._emitError(message, e);
+      });
+      queue.dispatcher = queue.connection.play(stream, {
+        highWaterMark: 1,
+        type: "opus",
+        volume: queue.volume / 100,
+        bitrate: "auto",
+      }).on("finish", () => this._handleSongFinish(message, queue))
+        .on("error", e => {
+          this._handlePlayingError(message, queue, errorEmitted ? null : e);
+        });
+      if (queue.stream) queue.stream.destroy();
+      queue.stream = stream;
+    } catch (e) {
+      this._handlePlayingError(message, queue, e);
+    }
+  }
 
   /**
    * Handle the queue when a Song finish
@@ -1250,9 +1241,14 @@ class DisTube extends EventEmitter {
    * @ignore
    * @param {Discord.Message} message message
    * @param {Queue} queue queue
+   * @param {Error} error error
    */
-  _handlePlayingError(message, queue) {
-    queue.songs.shift();
+  _handlePlayingError(message, queue, error = null) {
+    let song = queue.songs.shift();
+    if (error) {
+      error.message = `${error.message}\nID: ${song.id}\nName: ${song.name}`;
+      this._emitError(message, error);
+    }
     if (queue.songs.length > 0) this._playSong(message).then(() => this.emit("playSong", message, queue, queue.songs[0]));
     else try { this.stop(message) } catch { this._deleteQueue(message) }
   }

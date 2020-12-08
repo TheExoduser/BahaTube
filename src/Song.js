@@ -31,13 +31,15 @@ class Song {
    * @param {boolean} [youtube=false] Weather or not the video is a Youtube video.
    */
   constructor(info, user, youtube = false) {
-    if (this.youtube && info.full) this.info = info;
-    info = info.videoDetails || info;
     /**
      * `@2.6.0` Weather or not the video is a Youtube video.
      * @type {boolean}
      */
     this.youtube = info.youtube || youtube;
+    if (this.youtube && info.full) {
+      this.info = info;
+      info = info.videoDetails;
+    }
     /**
      * User requested
      * @type {Discord.User}
@@ -54,6 +56,11 @@ class Song {
      */
     this.name = info.title;
     /**
+     * `@2.5.0` Indicates if the video is an active live.
+     * @type {boolean}
+     */
+    this.isLive = info.isLive || info.is_live || false;
+    /**
      * Song duration.
      * @type {number}
      */
@@ -62,7 +69,7 @@ class Song {
      * Formatted duration string `hh:mm:ss` or `mm:ss`.
      * @type {string}
      */
-    this.formattedDuration = formatDuration(this.duration * 1000)
+    this.formattedDuration = this.isLive ? "Live" : formatDuration(this.duration * 1000)
     /**
      * Song URL.
      * @type {string}
@@ -72,7 +79,7 @@ class Song {
      * `@2.6.0` Stream / Download URL.
      * @type {?string}
      */
-    this.streamURL = this.info ? ytdl.chooseFormat(this.info.formats, {
+    this.streamURL = this.info && this.info.formats.length ? ytdl.chooseFormat(this.info.formats, {
       filter: this.isLive ? "audioandvideo" : "audioonly",
       quality: "highestaudio",
     }).url : info.url;
@@ -86,11 +93,6 @@ class Song {
      * @type {?ytdl.relatedVideo[]}
      */
     this.related = info.related_videos;
-    /**
-     * `@2.5.0` Indicates if the video is an active live.
-     * @type {boolean}
-     */
-    this.isLive = info.isLive || info.is_live || false;
     /**
      * `@2.6.0` Song views count
      * @type {number}
