@@ -12,7 +12,7 @@
 
 # DisTube
 
-A Discord.js v12 module to simplify your music commands and play songs with audio filters on Discord without any API key.
+A forked version of [DisTube](https://github.com/distubejs/DisTube) that allows listening to web radio stations and automatically resolves spotify urls to youtube videos.
 
 [DisTube Support Server](https://discord.gg/feaDd9h) - [Frequently Asked Questions](https://github.com/distubejs/DisTube/wiki/Frequently-Asked-Questions)
 
