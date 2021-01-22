@@ -1164,7 +1164,7 @@ class DisTube extends EventEmitter {
       let errorEmitted = false;
 
 		if (song.type === "spotify_track") {
-			let search = await this._resolveSong(message, await this._searchSong(message, song.name, false, 1));
+			let search = await this._resolveSong(message, await this._searchSong(message, song.name, false, 1), song.user);
 			queue.songs[0] = search;
 			song = search;
 			this.guildQueues.set(message.guild.id, queue);
