@@ -243,16 +243,16 @@ class DisTube extends EventEmitter {
    * @ignore
    * @returns {Promise<Song|Song[]>} Resolved Song
    */
-  async _resolveSong(message, song, type = "yt") {
+  async _resolveSong(message, song, type = "yt", user = null) {
     if (!song) return null;
     if (song instanceof Song) return song;
-    if (song instanceof SearchResult) return new Song(await ytdl.getInfo(song.url, { requestOptions: this.requestOptions }), message.author, true);
+    if (song instanceof SearchResult) return new Song(await ytdl.getInfo(song.url, { requestOptions: this.requestOptions }), ((user) ? user : message.author), true);
     if (typeof song === "object") return new Song(song, message.author);
     if (type === "spotify_track") {
       await updateSpotifyAccessToken();
 
       let s = (await spotifyApi.getTrack(song)).body;
-      return this._resolveSong(message, await this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1));
+      return this._resolveSong(message, await this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1), "yt", song.user);
     }
     if (ytdl.validateURL(song)) return new Song(await ytdl.getInfo(song, { requestOptions: this.requestOptions }), message.author, true);
     if (isURL(song)) {
