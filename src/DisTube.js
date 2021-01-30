@@ -1117,13 +1117,7 @@ class DisTube extends EventEmitter {
    * @ignore
    */
   _emitPlaySong(queue) {
-    if (
-      !this.options.emitNewSongOnly ||
-      (
-        queue.repeatMode !== 1 &&
-        (!queue.songs[1] || queue.songs[0].id !== queue.songs[1].id)
-      )
-    ) return true;
+    if (!this.options.emitNewSongOnly || (queue.repeatMode !== 1 && (!queue.songs[1] || queue.songs[0].id !== queue.songs[1].id))) return true;
     return false;
   }
 
@@ -1214,6 +1208,7 @@ class DisTube extends EventEmitter {
    * @param {Queue} queue queue
    */
   async _handleSongFinish(message, queue) {
+  	let forceEmit = false;
     if (queue.stopped) return;
     if (this.options.leaveOnEmpty && this._isVoiceChannelEmpty(queue)) {
       this._deleteQueue(message);
@@ -1231,11 +1226,14 @@ class DisTube extends EventEmitter {
         return;
       }
     }
-    if (queue.repeatMode !== 1 || queue.skipped) queue.songs.shift();
+    if (queue.repeatMode !== 1 || queue.skipped) {
+    	queue.songs.shift();
+    	forceEmit = true;
+	}
     queue.skipped = false;
     queue.beginTime = 0;
     await this._playSong(message);
-    if (this._emitPlaySong(queue)) this.emit("playSong", message, queue, queue.songs[0]);
+    if (this._emitPlaySong(queue) || forceEmit) this.emit("playSong", message, queue, queue.songs[0]);
   }
 
   /**
