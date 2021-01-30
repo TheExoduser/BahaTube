@@ -239,6 +239,8 @@ class DisTube extends EventEmitter {
    * @async
    * @param {Discord.Message} message The message from guild channel
    * @param {string|Song} song Youtube url | Search string | {@link Song}
+   * @param {string} Songtype
+   * @param {Discord.User|null} User to set for song result
    * @private
    * @ignore
    * @returns {Promise<Song|Song[]>} Resolved Song
@@ -247,21 +249,21 @@ class DisTube extends EventEmitter {
     if (!song) return null;
     if (song instanceof Song) return song;
     if (song instanceof SearchResult) return new Song(await ytdl.getInfo(song.url, { requestOptions: this.requestOptions }), ((user) ? user : message.author), true);
-    if (typeof song === "object") return new Song(song, message.author);
+    if (typeof song === "object") return new Song(song, ((user) ? user : message.author));
     if (type === "spotify_track") {
       await updateSpotifyAccessToken();
 
       let s = (await spotifyApi.getTrack(song)).body;
-      return this._resolveSong(message, await this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1), "yt", song.user);
+      return this._resolveSong(message, await this._searchSong(message, `${s.name} ${s.artists[0].name}`, true, 1), type, ((user) ? user : message.author));
     }
-    if (ytdl.validateURL(song)) return new Song(await ytdl.getInfo(song, { requestOptions: this.requestOptions }), message.author, true);
+    if (ytdl.validateURL(song)) return new Song(await ytdl.getInfo(song, { requestOptions: this.requestOptions }), ((user) ? user : message.author), true);
     if (isURL(song)) {
       if (!this.options.youtubeDL) throw new Error("Not Supported URL!");
       let info = await youtube_dl.getInfo(song, youtube_dlOptions).catch(e => { throw new Error(`[youtube-dl] ${e.stderr || e}`) });
-      if (Array.isArray(info) && info.length > 0) return info.map(i => new Song(i, message.author));
-      return new Song(info, message.author);
+      if (Array.isArray(info) && info.length > 0) return info.map(i => new Song(i, ((user) ? user : message.author)));
+      return new Song(info, ((user) ? user : message.author));
     }
-    return this._resolveSong(message, await this._searchSong(message, song));
+    return this._resolveSong(message, await this._searchSong(message, song), type, user);
   }
 
   /**
@@ -1164,7 +1166,7 @@ class DisTube extends EventEmitter {
       let errorEmitted = false;
 
 		if (song.type === "spotify_track") {
-			let search = await this._resolveSong(message, await this._searchSong(message, song.name, false, 1), song.user);
+			let search = await this._resolveSong(message, await this._searchSong(message, song.name, false, 1), "spotify_track", song.user);
 			queue.songs[0] = search;
 			song = search;
 			this.guildQueues.set(message.guild.id, queue);
