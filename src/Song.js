@@ -134,11 +134,6 @@ class Song {
      */
     this.type = "yt";
     /**
-     * VoteSkips for song
-     * @type {*[]}
-     */
-    this.voteSkips = [];
-    /**
      * @deprecated use `Song.name` instead
      * @type {string}
      */
