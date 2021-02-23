@@ -49,7 +49,7 @@
     "moment": "^2.29.1",
     "youtube-api-v3-search": "^1.2.1",
     "ffmpeg-static": "^4.2.6",
-    "spotify-web-api-node": "^4.0.0",
+    "spotify-web-api-node": "^5.0.2",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
