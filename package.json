@@ -47,7 +47,6 @@
     "@distube/ytsr": "^1.0.8",
     "ytdl-core": "^4.5.0",
     "moment": "^2.29.1",
-    "youtube-api-v3-search": "^1.2.1",
     "ffmpeg-static": "^4.2.6",
     "spotify-web-api-node": "^5.0.2",
     "node-fetch": "^2.6.1"
